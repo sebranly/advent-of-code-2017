@@ -27,9 +27,9 @@ int main()
     int previousDigit = UNSET;
     int currentDigit = UNSET;
     int firstDigit = UNSET;
-    int i = 0, j = 0, x = 0, y = 0, min = UNSET, max = UNSET, sum = 0, currentNumber = 0, comparisonIndex = 0, inputLength = 0, halfInputLength = 0, dayOfChallenge = 0, result = 0;
+    int i = 0, i2 = 0, j = 0, x = 0, y = 0, min = UNSET, max = UNSET, sum = 0, currentNumber = 0, comparisonIndex = 0, inputLength = 0, halfInputLength = 0, dayOfChallenge = 0, result = 0;
     // The following variables are used as booleans only
-    int keepReading = 1, incorrectDayOfChallenge = 1;
+    int keepReading = 1, incorrectDayOfChallenge = 1, skipLine = 0;
     int input[ARBITRARY_ARRAY_LIMIT] = {0};
     int inputIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT];
     for (i = 0 ; i < ARBITRARY_2D_ARRAY_LIMIT ; i++)
@@ -175,6 +175,33 @@ int main()
                 j++;
             }
             printf("Part 1 - Checksum for the input is: %d\n", sum);
+
+            sum = 0;
+            i = 0;
+            i2 = 0;
+            j = 0;
+            skipLine = 0;
+            while (inputIn2D[i][j] != UNSET)
+            {
+                while (inputIn2D[i][j] != UNSET && !skipLine)
+                {
+                    i2 = 0;
+                    while (inputIn2D[i2][j] != UNSET && !skipLine)
+                    {
+                       if (i != i2 && inputIn2D[i][j] >= inputIn2D[i2][j] && inputIn2D[i][j] % inputIn2D[i2][j] == 0)
+                       {
+                           sum += inputIn2D[i][j] / inputIn2D[i2][j];
+                           skipLine = 1;
+                       }
+                       i2++;
+                    }
+                    i++;
+                }
+                skipLine = 0;
+                i = 0;
+                j++;
+            }
+            printf("Part 2 - Checksum for the input is: %d\n", sum);
             break;
 
             default:
