@@ -5,7 +5,7 @@
 #define ZERO_ASCII_CODE 48
 #define NINE_ASCII_CODE 57
 
-#define LATEST_AVAILABLE_CHALLENGE 2
+#define LATEST_AVAILABLE_CHALLENGE 3
 #define MAX_CHALLENGE 25
 
 #define UNSET -1
@@ -15,6 +15,10 @@
 // The following value is a limit per dimension
 #define ARBITRARY_2D_ARRAY_LIMIT 100
 #define MAX_FILE_NAME_LENGTH 50
+
+#define NUMBER_OF_CARDINAL_DIRECTIONS 4
+
+enum { NORTH_WEST, NORTH_EAST, SOUTH_WEST, SOUTH_EAST };
 
 int isADigit(char c);
 int toInteger(char digit);
@@ -27,10 +31,13 @@ int main()
     int previousDigit = UNSET;
     int currentDigit = UNSET;
     int firstDigit = UNSET;
-    int i = 0, i2 = 0, j = 0, x = 0, y = 0, min = UNSET, max = UNSET, sum = 0, currentNumber = 0, comparisonIndex = 0, inputLength = 0, halfInputLength = 0, dayOfChallenge = 0, result = 0;
+    int i = 0, i2 = 0, j = 0, x = 0, y = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, sum = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, comparisonIndex = 0, inputLength = 0, halfInputLength = 0, dayOfChallenge = 0, result = 0;
     // The following variables are used as booleans only
     int keepReading = 1, incorrectDayOfChallenge = 1, skipLine = 0;
     int input[ARBITRARY_ARRAY_LIMIT] = {0};
+    int corners[NUMBER_OF_CARDINAL_DIRECTIONS];
+    for (i = 0 ; i < NUMBER_OF_CARDINAL_DIRECTIONS ; i++)
+        corners[i] = UNSET;
     int inputIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT];
     for (i = 0 ; i < ARBITRARY_2D_ARRAY_LIMIT ; i++)
         for (j = 0 ; j < ARBITRARY_2D_ARRAY_LIMIT ; j++)
@@ -202,6 +209,97 @@ int main()
                 j++;
             }
             printf("Part 2 - Checksum for the input is: %d\n", sum);
+            break;
+
+            case 3:
+            currentNumber = 0;
+            keepReading = 1;
+            while (keepReading)
+            {
+                currentChar = fgetc(file);
+                if (isADigit(currentChar))
+                {
+                    currentNumber *= 10;
+                    currentNumber += toInteger(currentChar);
+                }
+                else if (currentChar == EOF)
+                {
+                    keepReading = 0;
+                }
+                else
+                {
+                    printf("An unexpected error occurred while reading the input file with name %s\n", fileName);
+                    return EXIT_FAILURE;
+                }
+            }
+            if (currentNumber <= 0)
+            {
+                printf("The number for the memory has to be strictly greater than 0, the one found in the input file is %d so it is impossible to proceed", currentNumber);
+                return EXIT_FAILURE;
+            }
+            printf("Going to access memory in number %d based on Manhattan Distance...\n", currentNumber);
+
+            numberOfSteps = UNSET;
+            if (currentNumber == 1)
+            {
+                numberOfSteps = 0;
+            }
+            else
+            {
+                do
+                {
+                    /* Every time we go from a ring to an upper ring, the height has two more cells in height
+                    Ring #1 is the one right after the ring #0 (that only has cell 1) */
+                    min = (numberOfRing == 0) ? 2 : min + numberOfRing * 8;
+                    heightPerRing = (numberOfRing == 0) ? 3 : heightPerRing + 2;
+                    numberOfRing++;
+                    // Formula to know the max cell of the current ring being analyzed
+                    max = min + (heightPerRing - 1) * 4 - 1;
+                } while (currentNumber < min || currentNumber > max);
+                printf("Your cell has been identified on ring %d of memory cells that is ranging from %d to %d included\n", numberOfRing, min, max);
+
+                corners[SOUTH_EAST] = max;
+                corners[SOUTH_WEST] = max - (heightPerRing - 1);
+                corners[NORTH_WEST] = max - 2 * (heightPerRing - 1);
+                corners[NORTH_EAST] = max - 3 * (heightPerRing - 1);
+                printf("Numbers for the corners of this ring are NE: %d ; NW: %d ; SW: %d ; SE: %d\n", corners[NORTH_EAST], corners[NORTH_WEST], corners[SOUTH_WEST], corners[SOUTH_EAST]);
+
+                for (i = 0 ; i < NUMBER_OF_CARDINAL_DIRECTIONS ; i++)
+                    if (currentNumber == corners[i])
+                        numberOfSteps = (heightPerRing / 2) * 2;
+
+                if (numberOfSteps == UNSET)
+                {
+                    if (corners[SOUTH_EAST] > currentNumber && currentNumber > corners[SOUTH_WEST])
+                    {
+                        min = corners[SOUTH_WEST];
+                    }
+                    else if (corners[SOUTH_WEST] > currentNumber && currentNumber > corners[NORTH_WEST])
+                    {
+                        min = corners[NORTH_WEST];
+                    }
+                    else if (corners[NORTH_WEST] > currentNumber && currentNumber > corners[NORTH_EAST])
+                    {
+                        min = corners[NORTH_EAST];
+                    }
+                    else
+                    {
+                        // Compared to the ring min, we decrease the value and suppose it appears on the bottom right hand corner for our algorithm instead of the ring max value
+                        min -= 1;
+                    }
+                    pivotNumber = (2 * min + heightPerRing - 1) / 2;
+                    numberOfSteps = (heightPerRing / 2) * 2;
+                    number = min;
+
+                    do
+                    {
+                        number++;
+                        numberOfSteps = (number <= pivotNumber) ? numberOfSteps - 1 : numberOfSteps + 1;
+                    } while (number != currentNumber);
+                }
+            }
+
+            printf("Part 1 - %d step(s) is/are required to go from number %d to number 1 in the memory\n", numberOfSteps, currentNumber);
             break;
 
             default:
