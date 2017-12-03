@@ -19,9 +19,16 @@
 #define NUMBER_OF_CARDINAL_DIRECTIONS 4
 
 enum { NORTH_WEST, NORTH_EAST, SOUTH_WEST, SOUTH_EAST };
+enum { NORTH, SOUTH, WEST, EAST };
 
 int isADigit(char c);
 int toInteger(char digit);
+int nextSpiralDirection(int currentDirection);
+int valueIsBetween(int value, int min, int max);
+void moveOneStep(int * x, int * y, int currentDirection);
+void fillAllCells(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int value);
+int sumOfAdjacentCells(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int x, int y);
+void printCellsArrayIn2D(const int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int minX, int maxX, int minY, int maxY);
 
 int main()
 {
@@ -31,19 +38,19 @@ int main()
     int previousDigit = UNSET;
     int currentDigit = UNSET;
     int firstDigit = UNSET;
-    int i = 0, i2 = 0, j = 0, x = 0, y = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, sum = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, comparisonIndex = 0, inputLength = 0, halfInputLength = 0, dayOfChallenge = 0, result = 0;
+    int i = 0, i2 = 0, j = 0, x = 0, y = 0, uniqueInputNumber = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, sum = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, comparisonIndex = 0, inputLength = 0, halfInputLength = 0, dayOfChallenge = 0, result = 0;
+    int beforeResetForDirection = UNSET, currentDirection = UNSET;
     // The following variables are used as booleans only
-    int keepReading = 1, incorrectDayOfChallenge = 1, skipLine = 0;
+    int keepReading = 1, outOfArrayRange = 0, incorrectDayOfChallenge = 1, skipLine = 0;
     int input[ARBITRARY_ARRAY_LIMIT] = {0};
     int corners[NUMBER_OF_CARDINAL_DIRECTIONS];
     for (i = 0 ; i < NUMBER_OF_CARDINAL_DIRECTIONS ; i++)
         corners[i] = UNSET;
     int inputIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT];
-    for (i = 0 ; i < ARBITRARY_2D_ARRAY_LIMIT ; i++)
-        for (j = 0 ; j < ARBITRARY_2D_ARRAY_LIMIT ; j++)
-            inputIn2D[i][j] = UNSET;
+    fillAllCells(inputIn2D, UNSET);
 
-    do {
+    do
+    {
         printf("Which daily challenge do you want to access? (from 1 to %d)\nType %d to exit.\nYour choice: ", LATEST_AVAILABLE_CHALLENGE, EXIT_VALUE);
         scanf("%d", &dayOfChallenge);
 
@@ -131,6 +138,7 @@ int main()
             break;
 
             case 2:
+            fillAllCells(inputIn2D, UNSET);
             x = 0;
             y = 0;
             currentNumber = 0;
@@ -212,15 +220,15 @@ int main()
             break;
 
             case 3:
-            currentNumber = 0;
+            uniqueInputNumber = 0;
             keepReading = 1;
             while (keepReading)
             {
                 currentChar = fgetc(file);
                 if (isADigit(currentChar))
                 {
-                    currentNumber *= 10;
-                    currentNumber += toInteger(currentChar);
+                    uniqueInputNumber *= 10;
+                    uniqueInputNumber += toInteger(currentChar);
                 }
                 else if (currentChar == EOF)
                 {
@@ -232,15 +240,15 @@ int main()
                     return EXIT_FAILURE;
                 }
             }
-            if (currentNumber <= 0)
+            if (uniqueInputNumber <= 0)
             {
-                printf("The number for the memory has to be strictly greater than 0, the one found in the input file is %d so it is impossible to proceed", currentNumber);
+                printf("The number for the memory has to be strictly greater than 0, the one found in the input file is %d so it is impossible to proceed", uniqueInputNumber);
                 return EXIT_FAILURE;
             }
-            printf("Going to access memory in number %d based on Manhattan Distance...\n", currentNumber);
+            printf("Going to access memory in number %d based on Manhattan Distance...\n", uniqueInputNumber);
 
             numberOfSteps = UNSET;
-            if (currentNumber == 1)
+            if (uniqueInputNumber == 1)
             {
                 numberOfSteps = 0;
             }
@@ -255,7 +263,7 @@ int main()
                     numberOfRing++;
                     // Formula to know the max cell of the current ring being analyzed
                     max = min + (heightPerRing - 1) * 4 - 1;
-                } while (currentNumber < min || currentNumber > max);
+                } while (uniqueInputNumber < min || uniqueInputNumber > max);
                 printf("Your cell has been identified on ring %d of memory cells that is ranging from %d to %d included\n", numberOfRing, min, max);
 
                 corners[SOUTH_EAST] = max;
@@ -265,20 +273,20 @@ int main()
                 printf("Numbers for the corners of this ring are NE: %d ; NW: %d ; SW: %d ; SE: %d\n", corners[NORTH_EAST], corners[NORTH_WEST], corners[SOUTH_WEST], corners[SOUTH_EAST]);
 
                 for (i = 0 ; i < NUMBER_OF_CARDINAL_DIRECTIONS ; i++)
-                    if (currentNumber == corners[i])
+                    if (uniqueInputNumber == corners[i])
                         numberOfSteps = (heightPerRing / 2) * 2;
 
                 if (numberOfSteps == UNSET)
                 {
-                    if (corners[SOUTH_EAST] > currentNumber && currentNumber > corners[SOUTH_WEST])
+                    if (corners[SOUTH_EAST] > uniqueInputNumber && uniqueInputNumber > corners[SOUTH_WEST])
                     {
                         min = corners[SOUTH_WEST];
                     }
-                    else if (corners[SOUTH_WEST] > currentNumber && currentNumber > corners[NORTH_WEST])
+                    else if (corners[SOUTH_WEST] > uniqueInputNumber && uniqueInputNumber > corners[NORTH_WEST])
                     {
                         min = corners[NORTH_WEST];
                     }
-                    else if (corners[NORTH_WEST] > currentNumber && currentNumber > corners[NORTH_EAST])
+                    else if (corners[NORTH_WEST] > uniqueInputNumber && uniqueInputNumber > corners[NORTH_EAST])
                     {
                         min = corners[NORTH_EAST];
                     }
@@ -295,11 +303,58 @@ int main()
                     {
                         number++;
                         numberOfSteps = (number <= pivotNumber) ? numberOfSteps - 1 : numberOfSteps + 1;
-                    } while (number != currentNumber);
+                    } while (number != uniqueInputNumber);
                 }
             }
 
-            printf("Part 1 - %d step(s) is/are required to go from number %d to number 1 in the memory\n", numberOfSteps, currentNumber);
+            printf("Part 1 - %d step(s) is/are required to go from number %d to number 1 in the memory\n", numberOfSteps, uniqueInputNumber);
+
+            // Zero is a good choice (rather than UNSET) because we explicitly use the neutral number in the operation addition
+            fillAllCells(inputIn2D, 0);
+            x = ARBITRARY_2D_ARRAY_LIMIT / 2;
+            y = ARBITRARY_2D_ARRAY_LIMIT / 2;
+            number = 1;
+            inputIn2D[x][y] = number;
+            x++;
+            inputIn2D[x][y] = 1;
+            max = 1;
+            currentDirection = NORTH;
+            heightPerRing = 3;
+            beforeResetForDirection = 1;
+            outOfArrayRange = 0;
+
+            do
+            {
+                beforeResetForDirection--;
+                moveOneStep(&x, &y, currentDirection);
+                if (!valueIsBetween(x, 0, ARBITRARY_2D_ARRAY_LIMIT - 1) || !valueIsBetween(y, 0, ARBITRARY_2D_ARRAY_LIMIT - 1))
+                    outOfArrayRange = 1;
+                else
+                {
+                    number = sumOfAdjacentCells(inputIn2D, x, y);
+                    if (number > max)
+                        max = number;
+                    inputIn2D[x][y] = number;
+                    if (beforeResetForDirection == 0)
+                    {
+                        if (currentDirection == SOUTH || currentDirection == EAST)
+                            beforeResetForDirection = heightPerRing;
+                        else
+                            beforeResetForDirection = heightPerRing - 1;
+                        currentDirection = nextSpiralDirection(currentDirection);
+                        if (currentDirection == NORTH)
+                            heightPerRing += 2;
+                    }
+                }
+            } while (max < uniqueInputNumber && !outOfArrayRange);
+
+            if (outOfArrayRange)
+                printf("We could not find any solution with your input because of memory limitation in the program\n");
+            else
+            {
+                printCellsArrayIn2D(inputIn2D, ARBITRARY_2D_ARRAY_LIMIT/2 - 3, ARBITRARY_2D_ARRAY_LIMIT/2 + 3, ARBITRARY_2D_ARRAY_LIMIT/2 - 3, ARBITRARY_2D_ARRAY_LIMIT/2 + 3);
+                printf("Part 2 - the first value written that is larger than your puzzle input is %d\n", max);
+            }
             break;
 
             default:
@@ -324,4 +379,87 @@ int isADigit(char c)
 int toInteger(char digit)
 {
     return digit - ZERO_ASCII_CODE;
+}
+
+int nextSpiralDirection(int currentDirection)
+{
+    switch (currentDirection)
+    {
+        case NORTH:
+            return WEST;
+            break;
+        case WEST:
+            return SOUTH;
+            break;
+        case SOUTH:
+            return EAST;
+            break;
+        case EAST:
+        default:
+            return NORTH;
+            break;
+    }
+}
+
+void moveOneStep(int * x, int * y, int currentDirection)
+{
+    switch (currentDirection)
+    {
+        case NORTH:
+            (*y)--;
+            break;
+        case WEST:
+            (*x)--;
+            break;
+        case SOUTH:
+            (*y)++;
+            break;
+        case EAST:
+        default:
+            (*x)++;
+            break;
+    }
+}
+
+void fillAllCells(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int value)
+{
+    int i, j;
+    for (i = 0 ; i < ARBITRARY_2D_ARRAY_LIMIT ; i++)
+        for (j = 0 ; j < ARBITRARY_2D_ARRAY_LIMIT ; j++)
+            arrayIn2D[i][j] = value;
+}
+
+int sumOfAdjacentCells(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int x, int y)
+{
+    int sum = 0, i = 0, j = 0;
+    for (i = x - 1 ; i <= x + 1 ; i++)
+        for (j = y - 1 ; j <= y + 1 ; j++)
+            if (i != x || j != y)
+                if (valueIsBetween(i, 0, ARBITRARY_2D_ARRAY_LIMIT - 1) && valueIsBetween(j, 0, ARBITRARY_2D_ARRAY_LIMIT - 1))
+                    sum += arrayIn2D[i][j];
+    return sum;
+}
+
+int valueIsBetween(int value, int min, int max)
+{
+    return (min <= value && value <= max);
+}
+
+void printCellsArrayIn2D(const int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int minX, int maxX, int minY, int maxY)
+{
+    int i, j;
+    if (minX > maxX || minY > maxY || !valueIsBetween(minX, 0, ARBITRARY_2D_ARRAY_LIMIT - 1) || !valueIsBetween(maxX, 0, ARBITRARY_2D_ARRAY_LIMIT - 1) || !valueIsBetween(minY, 0, ARBITRARY_2D_ARRAY_LIMIT - 1) || !valueIsBetween(maxY, 0, ARBITRARY_2D_ARRAY_LIMIT - 1))
+    {
+        printf("We cannot print the portion of the 2D array because the limits are not correct\n");
+    }
+    else
+    {
+        printf("Displaying 2D array with X between %d and %d and Y between %d and %d\n", minX, maxX, minY, maxY);
+        for (j = minY ; j <= maxY ; j++)
+        {
+            for (i = minX ; i <= maxX ; i++)
+                printf("%d\t", arrayIn2D[i][j]);
+            printf("\n");
+        }
+    }
 }
