@@ -10,6 +10,8 @@ enum { ZERO_ASCII_CODE = 48, NINE_ASCII_CODE = 57, A_LOWER_CASE_ASCII_CODE = 97,
 #define UNSET -1
 #define EXIT_VALUE -1
 
+#define NUMBER_OF_LOWER_CASE_LETTERS 26
+
 #define ARBITRARY_ARRAY_LIMIT 3000
 // The following value is a limit per dimension
 #define ARBITRARY_2D_ARRAY_LIMIT 100
@@ -29,7 +31,10 @@ int toInteger(char digit);
 int nextSpiralDirection(int currentDirection);
 int valueIsBetween(int value, int min, int max);
 void moveOneStep(int * x, int * y, int currentDirection);
-void fillAllCells(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int value);
+void fillAllCells(int array[], int sizeArray, int value);
+void countLetters(const char * string, int array[NUMBER_OF_LOWER_CASE_LETTERS]);
+int differentArrays(int array1[], int array2[], int size);
+void fillAllCellsIn2D(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int value);
 int sumOfAdjacentCells(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int x, int y);
 void emptyInlineTextInput(char inlineInputAsText[MAX_ELEMENTS_PER_LINE][STRING_MAX_LENGTH]);
 void printCellsArrayIn2D(const int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int minX, int maxX, int minY, int maxY);
@@ -43,16 +48,18 @@ int main()
     int previousDigit = UNSET;
     int currentDigit = UNSET;
     int firstDigit = UNSET;
-    int i = 0, i2 = 0, j = 0, x = 0, y = 0, currentIndex = 0, currentCharIndex = 0, uniqueInputNumber = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, sum = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, comparisonIndex = 0, inputLength = 0, halfInputLength = 0, dayOfChallenge = 0, result = 0;
+    int i = 0, i2 = 0, j = 0, x = 0, y = 0, currentIndex = 0, currentCharIndex = 0, uniqueInputNumber = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, sum = 0, sum2 = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, comparisonIndex = 0, inputLength = 0, halfInputLength = 0, dayOfChallenge = 0, result = 0;
     int beforeResetForDirection = UNSET, currentDirection = UNSET;
     // The following variables are used as booleans only
     int keepReading = 1, outOfArrayRange = 0, incorrectDayOfChallenge = 1, skipLine = 0;
+    int counterOfLetters1[NUMBER_OF_LOWER_CASE_LETTERS] = {0};
+    int counterOfLetters2[NUMBER_OF_LOWER_CASE_LETTERS] = {0};
     int input[ARBITRARY_ARRAY_LIMIT] = {0};
     int corners[NUMBER_OF_CARDINAL_DIRECTIONS];
     for (i = 0 ; i < NUMBER_OF_CARDINAL_DIRECTIONS ; i++)
         corners[i] = UNSET;
     int inputIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT];
-    fillAllCells(inputIn2D, UNSET);
+    fillAllCellsIn2D(inputIn2D, UNSET);
 
     do
     {
@@ -143,7 +150,7 @@ int main()
             break;
 
             case 2:
-            fillAllCells(inputIn2D, UNSET);
+            fillAllCellsIn2D(inputIn2D, UNSET);
             x = 0;
             y = 0;
             currentNumber = 0;
@@ -315,7 +322,7 @@ int main()
             printf("Part 1 - %d step(s) is/are required to go from number %d to number 1 in the memory\n", numberOfSteps, uniqueInputNumber);
 
             // Zero is a good choice (rather than UNSET) because we explicitly use the neutral number in the operation addition
-            fillAllCells(inputIn2D, 0);
+            fillAllCellsIn2D(inputIn2D, 0);
             x = ARBITRARY_2D_ARRAY_LIMIT / 2;
             y = ARBITRARY_2D_ARRAY_LIMIT / 2;
             number = 1;
@@ -364,6 +371,7 @@ int main()
 
             case 4:
             sum = 0;
+            sum2 = 0;
             keepReading = 1;
             currentIndex = 0;
             currentCharIndex = 0;
@@ -398,7 +406,30 @@ int main()
                             i++;
                         }
                         if (!skipLine)
+                        {
                             sum += 1;
+                            // The rule for part 2 (based on anagrams) is more strict than the rule for part 1 (based on string comparison)
+                            skipLine = 0;
+                            i = 0;
+                            while (i <= currentIndex && !skipLine)
+                            {
+                                countLetters(inlineInputAsText[i], counterOfLetters1);
+                                j = 0;
+                                while (j <= currentIndex && !skipLine)
+                                {
+                                    if (i != j)
+                                    {
+                                        countLetters(inlineInputAsText[j], counterOfLetters2);
+                                        if (!differentArrays(counterOfLetters1, counterOfLetters2, NUMBER_OF_LOWER_CASE_LETTERS))
+                                            skipLine = 1;
+                                    }
+                                    j++;
+                                }
+                                i++;
+                            }
+                            if (!skipLine)
+                                sum2 += 1;
+                        }
 
                         currentIndex = 0;
                         emptyInlineTextInput(inlineInputAsText);
@@ -415,6 +446,7 @@ int main()
                 }
             }
             printf("Part 1 - there is/are %d valid passphrase(s) in the input file\n", sum);
+            printf("Part 2 - there is/are %d valid passphrase(s) in the input file\n", sum2);
             break;
 
             default:
@@ -486,12 +518,39 @@ void moveOneStep(int * x, int * y, int currentDirection)
     }
 }
 
-void fillAllCells(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int value)
+void fillAllCellsIn2D(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int value)
 {
     int i, j;
     for (i = 0 ; i < ARBITRARY_2D_ARRAY_LIMIT ; i++)
         for (j = 0 ; j < ARBITRARY_2D_ARRAY_LIMIT ; j++)
             arrayIn2D[i][j] = value;
+}
+
+void fillAllCells(int array[], int sizeArray, int value)
+{
+    int i;
+    for (i = 0 ; i < sizeArray ; i++)
+        array[i] = value;
+}
+
+void countLetters(const char * string, int array[NUMBER_OF_LOWER_CASE_LETTERS])
+{
+    int i = 0;
+    fillAllCells(array, NUMBER_OF_LOWER_CASE_LETTERS, 0);
+    while (string[i] != '\0')
+    {
+        array[string[i] - A_LOWER_CASE_ASCII_CODE]++;
+        i++;
+    }
+}
+
+int differentArrays(int array1[], int array2[], int size)
+{
+    int i = 0;
+    for (i = 0 ; i < size ; i++)
+        if (array1[i] != array2[i])
+            return 1;
+    return 0;
 }
 
 void emptyInlineTextInput(char inlineInputAsText[MAX_ELEMENTS_PER_LINE][STRING_MAX_LENGTH])
