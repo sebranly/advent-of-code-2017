@@ -2,10 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define ZERO_ASCII_CODE 48
-#define NINE_ASCII_CODE 57
+enum { ZERO_ASCII_CODE = 48, NINE_ASCII_CODE = 57, A_LOWER_CASE_ASCII_CODE = 97, Z_LOWER_CASE_ASCII_CODE = 122 };
 
-#define LATEST_AVAILABLE_CHALLENGE 3
+#define LATEST_AVAILABLE_CHALLENGE 4
 #define MAX_CHALLENGE 25
 
 #define UNSET -1
@@ -15,6 +14,9 @@
 // The following value is a limit per dimension
 #define ARBITRARY_2D_ARRAY_LIMIT 100
 #define MAX_FILE_NAME_LENGTH 50
+#define STRING_MAX_LENGTH 30
+#define MAX_ELEMENTS_PER_LINE 30
+#define SAME_STRINGS 0
 
 #define NUMBER_OF_CARDINAL_DIRECTIONS 4
 
@@ -22,12 +24,14 @@ enum { NORTH_WEST, NORTH_EAST, SOUTH_WEST, SOUTH_EAST };
 enum { NORTH, SOUTH, WEST, EAST };
 
 int isADigit(char c);
+int isALowerCaseLetter(char c);
 int toInteger(char digit);
 int nextSpiralDirection(int currentDirection);
 int valueIsBetween(int value, int min, int max);
 void moveOneStep(int * x, int * y, int currentDirection);
 void fillAllCells(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int value);
 int sumOfAdjacentCells(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int x, int y);
+void emptyInlineTextInput(char inlineInputAsText[MAX_ELEMENTS_PER_LINE][STRING_MAX_LENGTH]);
 void printCellsArrayIn2D(const int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int minX, int maxX, int minY, int maxY);
 
 int main()
@@ -35,10 +39,11 @@ int main()
     FILE* file = NULL;
     char currentChar = 0, c;
     char fileName[MAX_FILE_NAME_LENGTH];
+    char inlineInputAsText[MAX_ELEMENTS_PER_LINE][STRING_MAX_LENGTH];
     int previousDigit = UNSET;
     int currentDigit = UNSET;
     int firstDigit = UNSET;
-    int i = 0, i2 = 0, j = 0, x = 0, y = 0, uniqueInputNumber = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, sum = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, comparisonIndex = 0, inputLength = 0, halfInputLength = 0, dayOfChallenge = 0, result = 0;
+    int i = 0, i2 = 0, j = 0, x = 0, y = 0, currentIndex = 0, currentCharIndex = 0, uniqueInputNumber = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, sum = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, comparisonIndex = 0, inputLength = 0, halfInputLength = 0, dayOfChallenge = 0, result = 0;
     int beforeResetForDirection = UNSET, currentDirection = UNSET;
     // The following variables are used as booleans only
     int keepReading = 1, outOfArrayRange = 0, incorrectDayOfChallenge = 1, skipLine = 0;
@@ -353,8 +358,63 @@ int main()
             else
             {
                 printCellsArrayIn2D(inputIn2D, ARBITRARY_2D_ARRAY_LIMIT/2 - 3, ARBITRARY_2D_ARRAY_LIMIT/2 + 3, ARBITRARY_2D_ARRAY_LIMIT/2 - 3, ARBITRARY_2D_ARRAY_LIMIT/2 + 3);
-                printf("Part 2 - the first value written that is larger than your puzzle input is %d\n", max);
+                printf("Part 2 - the first value written that is larger than your puzzle input %d is %d\n", uniqueInputNumber, max);
             }
+            break;
+
+            case 4:
+            sum = 0;
+            keepReading = 1;
+            currentIndex = 0;
+            currentCharIndex = 0;
+            emptyInlineTextInput(inlineInputAsText);
+            while (keepReading)
+            {
+                currentChar = fgetc(file);
+                if (isALowerCaseLetter(currentChar))
+                {
+                    inlineInputAsText[currentIndex][currentCharIndex] = currentChar;
+                    currentCharIndex++;
+                }
+                else if (currentChar == ' ' || currentChar == '\n' || currentChar == EOF)
+                {
+                    inlineInputAsText[currentIndex][currentCharIndex] = '\0';
+                    currentCharIndex = 0;
+                    if (currentChar == ' ')
+                        currentIndex++;
+                    else
+                    {
+                        skipLine = 0;
+                        i = 0;
+                        while (i <= currentIndex && !skipLine)
+                        {
+                            j = 0;
+                            while (j <= currentIndex && !skipLine)
+                            {
+                                if (i != j && strcmp(inlineInputAsText[i], inlineInputAsText[j]) == SAME_STRINGS)
+                                    skipLine = 1;
+                                j++;
+                            }
+                            i++;
+                        }
+                        if (!skipLine)
+                            sum += 1;
+
+                        currentIndex = 0;
+                        emptyInlineTextInput(inlineInputAsText);
+
+                        if (currentChar == EOF)
+                            keepReading = 0;
+                    }
+
+                }
+                else
+                {
+                    printf("An unexpected error occurred while reading the input file with name %s\n", fileName);
+                    return EXIT_FAILURE;
+                }
+            }
+            printf("Part 1 - there is/are %d valid passphrase(s) in the input file\n", sum);
             break;
 
             default:
@@ -374,6 +434,11 @@ int main()
 int isADigit(char c)
 {
     return (c >= ZERO_ASCII_CODE && c <= NINE_ASCII_CODE);
+}
+
+int isALowerCaseLetter(char c)
+{
+    return (c >= A_LOWER_CASE_ASCII_CODE && c <= Z_LOWER_CASE_ASCII_CODE);
 }
 
 int toInteger(char digit)
@@ -427,6 +492,13 @@ void fillAllCells(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIM
     for (i = 0 ; i < ARBITRARY_2D_ARRAY_LIMIT ; i++)
         for (j = 0 ; j < ARBITRARY_2D_ARRAY_LIMIT ; j++)
             arrayIn2D[i][j] = value;
+}
+
+void emptyInlineTextInput(char inlineInputAsText[MAX_ELEMENTS_PER_LINE][STRING_MAX_LENGTH])
+{
+    int i;
+    for (i = 0 ; i < MAX_ELEMENTS_PER_LINE ; i++)
+        inlineInputAsText[i][0] = '\0';
 }
 
 int sumOfAdjacentCells(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int x, int y)
