@@ -34,6 +34,7 @@ void moveOneStep(int * x, int * y, int currentDirection);
 void fillAllCells(int array[], int sizeArray, int value);
 void countLetters(const char * string, int array[NUMBER_OF_LOWER_CASE_LETTERS]);
 int differentArrays(int array1[], int array2[], int size);
+void copyFirstCells(int sourceArray[], int destinationArray[], int numberOfCellsToBeCopied);
 void fillAllCellsIn2D(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int value);
 int sumOfAdjacentCells(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int x, int y);
 void emptyInlineTextInput(char inlineInputAsText[MAX_ELEMENTS_PER_LINE][STRING_MAX_LENGTH]);
@@ -48,13 +49,14 @@ int main()
     int previousDigit = UNSET;
     int currentDigit = UNSET;
     int firstDigit = UNSET;
-    int i = 0, i2 = 0, j = 0, x = 0, y = 0, size = 0, sign = 1, currentIndex = 0, currentCharIndex = 0, uniqueInputNumber = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, sum = 0, sum2 = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, comparisonIndex = 0, inputLength = 0, halfInputLength = 0, dayOfChallenge = 0, result = 0;
+    int i = 0, i2 = 0, j = 0, x = 0, y = 0, part = 1, size = 0, sign = 1, currentIndex = 0, currentCharIndex = 0, uniqueInputNumber = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, sum = 0, sum2 = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, comparisonIndex = 0, inputLength = 0, halfInputLength = 0, dayOfChallenge = 0, result = 0;
     int beforeResetForDirection = UNSET, currentDirection = UNSET;
     // The following variables are used as booleans only
     int keepReading = 1, outOfArrayRange = 0, incorrectDayOfChallenge = 1, skipLine = 0;
     int counterOfLetters1[NUMBER_OF_LOWER_CASE_LETTERS] = {0};
     int counterOfLetters2[NUMBER_OF_LOWER_CASE_LETTERS] = {0};
     int input[ARBITRARY_ARRAY_LIMIT] = {0};
+    int input2[ARBITRARY_ARRAY_LIMIT] = {0};
     int corners[NUMBER_OF_CARDINAL_DIRECTIONS];
     for (i = 0 ; i < NUMBER_OF_CARDINAL_DIRECTIONS ; i++)
         corners[i] = UNSET;
@@ -492,16 +494,28 @@ int main()
                     return EXIT_FAILURE;
                 }
             }
-            currentIndex = 0;
-            numberOfSteps = 0;
-            while (currentIndex >= 0 && currentIndex < size)
+            copyFirstCells(input, input2, size);
+
+            part = 1;
+            while (part <= 2)
             {
-                currentNumber = input[currentIndex];
-                input[currentIndex]++;
-                currentIndex += currentNumber;
-                numberOfSteps++;
+                currentIndex = 0;
+                numberOfSteps = 0;
+                while (currentIndex >= 0 && currentIndex < size)
+                {
+                    currentNumber = input[currentIndex];
+                    if (part == 2 && currentNumber >= 3)
+                        input[currentIndex]--;
+                    else
+                        input[currentIndex]++;
+                    currentIndex += currentNumber;
+                    numberOfSteps++;
+                }
+                printf("Part %d - %d step(s) was/were needed to get out of the list\n", part, numberOfSteps);
+                part++;
+                if (part == 2)
+                    copyFirstCells(input2, input, size);
             }
-            printf("Part 1 - %d step(s) was/were needed to get out of the list\n", numberOfSteps);
             break;
 
             default:
@@ -606,6 +620,13 @@ int differentArrays(int array1[], int array2[], int size)
         if (array1[i] != array2[i])
             return 1;
     return 0;
+}
+
+void copyFirstCells(int sourceArray[], int destinationArray[], int numberOfCellsToBeCopied)
+{
+    int i = 0;
+    for (i = 0 ; i < numberOfCellsToBeCopied ; i++)
+        destinationArray[i] = sourceArray[i];
 }
 
 void emptyInlineTextInput(char inlineInputAsText[MAX_ELEMENTS_PER_LINE][STRING_MAX_LENGTH])
