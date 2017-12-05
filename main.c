@@ -4,7 +4,7 @@
 
 enum { ZERO_ASCII_CODE = 48, NINE_ASCII_CODE = 57, A_LOWER_CASE_ASCII_CODE = 97, Z_LOWER_CASE_ASCII_CODE = 122 };
 
-#define LATEST_AVAILABLE_CHALLENGE 4
+#define LATEST_AVAILABLE_CHALLENGE 5
 #define MAX_CHALLENGE 25
 
 #define UNSET -1
@@ -48,7 +48,7 @@ int main()
     int previousDigit = UNSET;
     int currentDigit = UNSET;
     int firstDigit = UNSET;
-    int i = 0, i2 = 0, j = 0, x = 0, y = 0, currentIndex = 0, currentCharIndex = 0, uniqueInputNumber = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, sum = 0, sum2 = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, comparisonIndex = 0, inputLength = 0, halfInputLength = 0, dayOfChallenge = 0, result = 0;
+    int i = 0, i2 = 0, j = 0, x = 0, y = 0, size = 0, sign = 1, currentIndex = 0, currentCharIndex = 0, uniqueInputNumber = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, sum = 0, sum2 = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, comparisonIndex = 0, inputLength = 0, halfInputLength = 0, dayOfChallenge = 0, result = 0;
     int beforeResetForDirection = UNSET, currentDirection = UNSET;
     // The following variables are used as booleans only
     int keepReading = 1, outOfArrayRange = 0, incorrectDayOfChallenge = 1, skipLine = 0;
@@ -447,6 +447,61 @@ int main()
             }
             printf("Part 1 - there is/are %d valid passphrase(s) in the input file\n", sum);
             printf("Part 2 - there is/are %d valid passphrase(s) in the input file\n", sum2);
+            break;
+
+            case 5:
+            fillAllCells(input, ARBITRARY_ARRAY_LIMIT, 0);
+            size = 0;
+            sign = 1;
+            keepReading = 1;
+            currentNumber = 0;
+            while (keepReading)
+            {
+                currentChar = fgetc(file);
+                if (isADigit(currentChar))
+                {
+                    currentNumber *= 10;
+                    currentNumber += toInteger(currentChar);
+                }
+                else if (currentChar == '-')
+                {
+                    if (sign == -1)
+                    {
+                        printf("An error occurred while reading the input file with name %s because two minus signs are on a line\n", fileName);
+                        return EXIT_FAILURE;
+                    }
+                    sign = -1;
+                }
+                else if (currentChar == '\n' || currentChar == EOF)
+                {
+                    input[size] = sign * currentNumber;
+                    size++;
+                    if (size >= ARBITRARY_ARRAY_LIMIT)
+                    {
+                        printf("An error occurred while reading the input file with name %s because of memory limitation in the program\n", fileName);
+                        return EXIT_FAILURE;
+                    }
+                    sign = 1;
+                    currentNumber = 0;
+                    if (currentChar == EOF)
+                        keepReading = 0;
+                }
+                else
+                {
+                    printf("An unexpected error occurred while reading the input file with name %s\n", fileName);
+                    return EXIT_FAILURE;
+                }
+            }
+            currentIndex = 0;
+            numberOfSteps = 0;
+            while (currentIndex >= 0 && currentIndex < size)
+            {
+                currentNumber = input[currentIndex];
+                input[currentIndex]++;
+                currentIndex += currentNumber;
+                numberOfSteps++;
+            }
+            printf("Part 1 - %d step(s) was/were needed to get out of the list\n", numberOfSteps);
             break;
 
             default:
