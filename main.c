@@ -4,7 +4,7 @@
 
 enum { ZERO_ASCII_CODE = 48, NINE_ASCII_CODE = 57, A_LOWER_CASE_ASCII_CODE = 97, Z_LOWER_CASE_ASCII_CODE = 122 };
 
-#define LATEST_AVAILABLE_CHALLENGE 5
+#define LATEST_AVAILABLE_CHALLENGE 6
 #define MAX_CHALLENGE 25
 
 #define UNSET -1
@@ -13,6 +13,9 @@ enum { ZERO_ASCII_CODE = 48, NINE_ASCII_CODE = 57, A_LOWER_CASE_ASCII_CODE = 97,
 #define NUMBER_OF_LOWER_CASE_LETTERS 26
 
 #define ARBITRARY_ARRAY_LIMIT 3000
+// TBD - Note: day challenge 6 part 1 deserves an optimization because this is only a workaround so far (problem is memory limitation)
+#define ARBITRARY_NUMBER_OF_RECORDS 15000
+#define ARBITRARY_NUMBER_OF_ELEMENTS_PER_RECORD 30
 // The following value is a limit per dimension
 #define ARBITRARY_2D_ARRAY_LIMIT 100
 #define MAX_FILE_NAME_LENGTH 50
@@ -33,6 +36,7 @@ int valueIsBetween(int value, int min, int max);
 void moveOneStep(int * x, int * y, int currentDirection);
 void fillAllCells(int array[], int sizeArray, int value);
 void countLetters(const char * string, int array[NUMBER_OF_LOWER_CASE_LETTERS]);
+int minIndexOfMaxValue(int array[], int size);
 int differentArrays(int array1[], int array2[], int size);
 void copyFirstCells(int sourceArray[], int destinationArray[], int numberOfCellsToBeCopied);
 void fillAllCellsIn2D(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int value);
@@ -52,7 +56,7 @@ int main()
     int i = 0, i2 = 0, j = 0, x = 0, y = 0, part = 1, size = 0, sign = 1, currentIndex = 0, currentCharIndex = 0, uniqueInputNumber = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, sum = 0, sum2 = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, comparisonIndex = 0, inputLength = 0, halfInputLength = 0, dayOfChallenge = 0, result = 0;
     int beforeResetForDirection = UNSET, currentDirection = UNSET;
     // The following variables are used as booleans only
-    int keepReading = 1, outOfArrayRange = 0, incorrectDayOfChallenge = 1, skipLine = 0;
+    int keepReading = 1, outOfArrayRange = 0, incorrectDayOfChallenge = 1, skipLine = 0, solutionIsFound = 0;
     int counterOfLetters1[NUMBER_OF_LOWER_CASE_LETTERS] = {0};
     int counterOfLetters2[NUMBER_OF_LOWER_CASE_LETTERS] = {0};
     int input[ARBITRARY_ARRAY_LIMIT] = {0};
@@ -61,6 +65,7 @@ int main()
     for (i = 0 ; i < NUMBER_OF_CARDINAL_DIRECTIONS ; i++)
         corners[i] = UNSET;
     int inputIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT];
+    int records[ARBITRARY_NUMBER_OF_RECORDS][ARBITRARY_NUMBER_OF_ELEMENTS_PER_RECORD];
     fillAllCellsIn2D(inputIn2D, UNSET);
 
     do
@@ -518,6 +523,68 @@ int main()
             }
             break;
 
+            case 6:
+            currentNumber = 0;
+            currentIndex = 0;
+            while (keepReading)
+            {
+                currentChar = fgetc(file);
+                if (isADigit(currentChar))
+                {
+                    currentNumber *= 10;
+                    currentNumber += toInteger(currentChar);
+                }
+                else {
+                    if (currentChar == EOF)
+                        keepReading = 0;
+                    else if (currentChar != '\t')
+                    {
+                        printf("An unexpected error occurred while reading the input file with name %s\n", fileName);
+                        return EXIT_FAILURE;
+                    }
+                    input[currentIndex] = currentNumber;
+                    currentNumber = 0;
+                    currentIndex++;
+                }
+            }
+            size = currentIndex;
+            numberOfSteps = 0;
+            printf("%04d: ", numberOfSteps);
+            for (i = 0 ; i < size ; i++)
+                printf("<%d> ", input[i]);
+            printf("\n");
+            copyFirstCells(input, records[0], size);
+            solutionIsFound = 0;
+            while (!solutionIsFound)
+            {
+                currentIndex = minIndexOfMaxValue(input, size);
+                currentNumber = input[currentIndex];
+                if (currentNumber == 0)
+                {
+                    printf("The input max value is 0 so there is nothing to distribute");
+                    return EXIT_FAILURE;
+                }
+                input[currentIndex] = 0;
+                while (currentNumber > 0)
+                {
+                    currentIndex = (currentIndex + 1) % size;
+                    input[currentIndex] += 1;
+                    currentNumber--;
+                }
+                numberOfSteps++;
+                for (i = 0 ; i < numberOfSteps && !solutionIsFound ; i++)
+                {
+                    if (!differentArrays(input, records[i], size))
+                    {
+                        number = i;
+                        solutionIsFound = 1;
+                    }
+                }
+                copyFirstCells(input, records[numberOfSteps], size);
+            }
+            printf("Part 1 - An infinite loop has been detected after the block redistribution cycle #%d with cycle #%d", numberOfSteps, number);
+            break;
+
             default:
             break;
         }
@@ -634,6 +701,21 @@ void emptyInlineTextInput(char inlineInputAsText[MAX_ELEMENTS_PER_LINE][STRING_M
     int i;
     for (i = 0 ; i < MAX_ELEMENTS_PER_LINE ; i++)
         inlineInputAsText[i][0] = '\0';
+}
+
+int minIndexOfMaxValue(int array[], int size)
+{
+    int associatedMinIndex = size - 1;
+    int i = 0, maxValue = array[associatedMinIndex];
+    for (i = associatedMinIndex - 1 ; i >= 0 ; i--)
+    {
+        if (array[i] >= maxValue)
+        {
+            maxValue = array[i];
+            associatedMinIndex = i;
+        }
+    }
+    return associatedMinIndex;
 }
 
 int sumOfAdjacentCells(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int x, int y)
