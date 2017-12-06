@@ -582,7 +582,8 @@ int main()
                 }
                 copyFirstCells(input, records[numberOfSteps], size);
             }
-            printf("Part 1 - An infinite loop has been detected after the block redistribution cycle #%d with cycle #%d", numberOfSteps, number);
+            printf("Part 1 - An infinite loop has been detected after the block redistribution cycle #%d with cycle #%d\n", numberOfSteps, number);
+            printf("Part 2 - the size of the loop is %d\n", numberOfSteps - number);
             break;
 
             default:
@@ -706,7 +707,7 @@ void emptyInlineTextInput(char inlineInputAsText[MAX_ELEMENTS_PER_LINE][STRING_M
 int minIndexOfMaxValue(int array[], int size)
 {
     int associatedMinIndex = size - 1;
-    int i = 0, maxValue = array[associatedMinIndex];
+    int i, maxValue = array[associatedMinIndex];
     for (i = associatedMinIndex - 1 ; i >= 0 ; i--)
     {
         if (array[i] >= maxValue)
