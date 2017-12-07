@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "main.h"
 
 enum { ZERO_ASCII_CODE = 48, NINE_ASCII_CODE = 57, A_LOWER_CASE_ASCII_CODE = 97, Z_LOWER_CASE_ASCII_CODE = 122 };
 
-#define LATEST_AVAILABLE_CHALLENGE 6
+#define LATEST_AVAILABLE_CHALLENGE 7
 #define MAX_CHALLENGE 25
 
 #define UNSET -1
@@ -43,6 +44,9 @@ void fillAllCellsIn2D(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY
 int sumOfAdjacentCells(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int x, int y);
 void emptyInlineTextInput(char inlineInputAsText[MAX_ELEMENTS_PER_LINE][STRING_MAX_LENGTH]);
 void printCellsArrayIn2D(const int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int minX, int maxX, int minY, int maxY);
+int addAncestor(TreeElement elements[], int size, const char elementName[], const char ancestorName[]);
+void removeTreeAncestors(TreeElement elements[], int size);
+char * firstElementWithoutAncestor(TreeElement elements[], int size);
 
 int main()
 {
@@ -50,13 +54,14 @@ int main()
     char currentChar = 0, c;
     char fileName[MAX_FILE_NAME_LENGTH];
     char inlineInputAsText[MAX_ELEMENTS_PER_LINE][STRING_MAX_LENGTH];
+    char ancestor[TREE_ELEMENT_NAME_MAX_LENGTH], element[TREE_ELEMENT_NAME_MAX_LENGTH];
     int previousDigit = UNSET;
     int currentDigit = UNSET;
     int firstDigit = UNSET;
-    int i = 0, i2 = 0, j = 0, x = 0, y = 0, part = 1, size = 0, sign = 1, currentIndex = 0, currentCharIndex = 0, uniqueInputNumber = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, sum = 0, sum2 = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, comparisonIndex = 0, inputLength = 0, halfInputLength = 0, dayOfChallenge = 0, result = 0;
+    int i = 0, i2 = 0, j = 0, x = 0, y = 0, part = 1, count = 0, size = 0, sign = 1, currentIndex = 0, currentCharIndex = 0, uniqueInputNumber = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, sum = 0, sum2 = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, comparisonIndex = 0, inputLength = 0, halfInputLength = 0, dayOfChallenge = 0, result = 0;
     int beforeResetForDirection = UNSET, currentDirection = UNSET;
     // The following variables are used as booleans only
-    int keepReading = 1, outOfArrayRange = 0, incorrectDayOfChallenge = 1, skipLine = 0, solutionIsFound = 0;
+    int keepReading = 1, outOfArrayRange = 0, incorrectDayOfChallenge = 1, skipLine = 0, solutionIsFound = 0, stillOnAncestorName = 1;
     int counterOfLetters1[NUMBER_OF_LOWER_CASE_LETTERS] = {0};
     int counterOfLetters2[NUMBER_OF_LOWER_CASE_LETTERS] = {0};
     int input[ARBITRARY_ARRAY_LIMIT] = {0};
@@ -64,8 +69,9 @@ int main()
     int corners[NUMBER_OF_CARDINAL_DIRECTIONS];
     for (i = 0 ; i < NUMBER_OF_CARDINAL_DIRECTIONS ; i++)
         corners[i] = UNSET;
-    int inputIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT];
+    TreeElement treeElements[MAX_TREE_ELEMENTS];
     int records[ARBITRARY_NUMBER_OF_RECORDS][ARBITRARY_NUMBER_OF_ELEMENTS_PER_RECORD];
+    int inputIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT];
     fillAllCellsIn2D(inputIn2D, UNSET);
 
     do
@@ -586,6 +592,109 @@ int main()
             printf("Part 2 - the size of the loop is %d\n", numberOfSteps - number);
             break;
 
+            case 7:
+            size = 0;
+            currentCharIndex = 0;
+            currentNumber = 0;
+            stillOnAncestorName = 1;
+            keepReading = 1;
+            while(keepReading)
+            {
+                currentChar = fgetc(file);
+                if (isALowerCaseLetter(currentChar) && stillOnAncestorName)
+                {
+                    treeElements[size].element[currentCharIndex] = currentChar;
+                    currentCharIndex++;
+                }
+                else if (currentChar == ' ' && stillOnAncestorName)
+                {
+                    treeElements[size].element[currentCharIndex] = '\0';
+                    stillOnAncestorName = 0;
+                }
+                else if (isADigit(currentChar))
+                {
+                    currentNumber *= 10;
+                    currentNumber += toInteger(currentChar);
+                }
+                else if (currentChar == ')')
+                {
+                    treeElements[size].value = currentNumber;
+                    currentNumber = 0;
+                }
+                else if (currentChar == '\n')
+                {
+                    size++;
+                    stillOnAncestorName = 1;
+                    currentCharIndex = 0;
+                }
+                else if (currentChar == EOF)
+                {
+                    // Workaround in order not to count a new line plus EOF as a word regarding the size in case it was empty
+                    if (!stillOnAncestorName)
+                        size++;
+                    keepReading = 0;
+                }
+            }
+            removeTreeAncestors(treeElements, size);
+            rewind(file);
+
+            count = 0;
+            keepReading = 1;
+            stillOnAncestorName = 1;
+            currentCharIndex = 0;
+            while (keepReading)
+            {
+                currentChar = fgetc(file);
+                if (isALowerCaseLetter(currentChar))
+                {
+                    if (stillOnAncestorName)
+                    {
+                        ancestor[currentCharIndex] = currentChar;
+                    }
+                    else
+                    {
+                        element[currentCharIndex] = currentChar;
+                    }
+                    currentCharIndex++;
+                }
+                else if (currentChar == '>')
+                {
+                    ancestor[currentCharIndex] = '\0';
+                    currentCharIndex = 0;
+                    stillOnAncestorName = 0;
+                }
+                else if (currentChar == ',')
+                {
+                    element[currentCharIndex] = '\0';
+                    addAncestor(treeElements, size, element, ancestor);
+                    currentCharIndex = 0;
+                }
+                else if (currentChar == '\n')
+                {
+                    if (!stillOnAncestorName)
+                    {
+                        element[currentCharIndex] = '\0';
+                        addAncestor(treeElements, size, element, ancestor);
+                    }
+                    currentCharIndex = 0;
+                    ancestor[0] = '\0';
+                    stillOnAncestorName = 1;
+                    count++;
+                }
+                else if (currentChar == EOF)
+                {
+                    if (!stillOnAncestorName)
+                    {
+                        element[currentCharIndex] = '\0';
+                        addAncestor(treeElements, size, element, ancestor);
+                    }
+                    keepReading = 0;
+                }
+            }
+            strcpy(ancestor, firstElementWithoutAncestor(treeElements, size));
+            printf("Part 1 - The bottom program is called %s", ancestor);
+            break;
+
             default:
             break;
         }
@@ -752,4 +861,34 @@ void printCellsArrayIn2D(const int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY
             printf("\n");
         }
     }
+}
+
+int addAncestor(TreeElement elements[], int size, const char elementName[], const char ancestorName[])
+{
+    int i = 0;
+    for (i = 0 ; i < size ; i++)
+        if (strcmp(elementName, elements[i].element) == SAME_STRINGS)
+        {
+            strcpy(elements[i].uniqueAncestor, ancestorName);
+            return 1;
+        }
+    return 0;
+}
+
+void removeTreeAncestors(TreeElement elements[], int size)
+{
+    int i = 0;
+    for (i = 0 ; i < 0 ; i++)
+    {
+        elements[i].uniqueAncestor[0] = '\0';
+    }
+}
+
+char * firstElementWithoutAncestor(TreeElement elements[], int size)
+{
+    int i = 0;
+    for (i = 0 ; i < size ; i++)
+        if (elements[i].uniqueAncestor[0] == '\0')
+            return elements[i].element;
+    return "";
 }
