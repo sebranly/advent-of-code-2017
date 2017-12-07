@@ -535,7 +535,7 @@ int main()
                     currentNumber += toInteger(currentChar);
                 }
                 else {
-                    if (currentChar == EOF)
+                    if (currentChar == EOF || currentChar == '\n')
                         keepReading = 0;
                     else if (currentChar != '\t')
                     {
