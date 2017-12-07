@@ -23,6 +23,7 @@ enum { ZERO_ASCII_CODE = 48, NINE_ASCII_CODE = 57, A_LOWER_CASE_ASCII_CODE = 97,
 #define STRING_MAX_LENGTH 30
 #define MAX_ELEMENTS_PER_LINE 30
 #define SAME_STRINGS 0
+#define MAX_DEPTH_TO_DISPLAY 2
 
 #define NUMBER_OF_CARDINAL_DIRECTIONS 4
 
@@ -46,7 +47,9 @@ void emptyInlineTextInput(char inlineInputAsText[MAX_ELEMENTS_PER_LINE][STRING_M
 void printCellsArrayIn2D(const int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int minX, int maxX, int minY, int maxY);
 int addAncestor(TreeElement elements[], int size, const char elementName[], const char ancestorName[]);
 void removeTreeAncestors(TreeElement elements[], int size);
-char * firstElementWithoutAncestor(TreeElement elements[], int size);
+TreeElement firstElementWithoutAncestor(TreeElement elements[], int size);
+void displayChildren(TreeElement elements[], int size, const TreeElement ancestor, int depth);
+int setValueOfAncestorAndChildren(TreeElement elements[], int size, TreeElement * ancestor);
 
 int main()
 {
@@ -54,11 +57,11 @@ int main()
     char currentChar = 0, c;
     char fileName[MAX_FILE_NAME_LENGTH];
     char inlineInputAsText[MAX_ELEMENTS_PER_LINE][STRING_MAX_LENGTH];
-    char ancestor[TREE_ELEMENT_NAME_MAX_LENGTH], element[TREE_ELEMENT_NAME_MAX_LENGTH];
+    char ancestorName[TREE_ELEMENT_NAME_MAX_LENGTH], elementName[TREE_ELEMENT_NAME_MAX_LENGTH];
     int previousDigit = UNSET;
     int currentDigit = UNSET;
     int firstDigit = UNSET;
-    int i = 0, i2 = 0, j = 0, x = 0, y = 0, part = 1, count = 0, size = 0, sign = 1, currentIndex = 0, currentCharIndex = 0, uniqueInputNumber = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, sum = 0, sum2 = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, comparisonIndex = 0, inputLength = 0, halfInputLength = 0, dayOfChallenge = 0, result = 0;
+    int i = 0, i2 = 0, j = 0, x = 0, y = 0, part = 1, size = 0, sign = 1, currentIndex = 0, currentCharIndex = 0, uniqueInputNumber = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, sum = 0, sum2 = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, comparisonIndex = 0, inputLength = 0, halfInputLength = 0, dayOfChallenge = 0, result = 0;
     int beforeResetForDirection = UNSET, currentDirection = UNSET;
     // The following variables are used as booleans only
     int keepReading = 1, outOfArrayRange = 0, incorrectDayOfChallenge = 1, skipLine = 0, solutionIsFound = 0, stillOnAncestorName = 1;
@@ -69,7 +72,7 @@ int main()
     int corners[NUMBER_OF_CARDINAL_DIRECTIONS];
     for (i = 0 ; i < NUMBER_OF_CARDINAL_DIRECTIONS ; i++)
         corners[i] = UNSET;
-    TreeElement treeElements[MAX_TREE_ELEMENTS];
+    TreeElement treeElements[MAX_TREE_ELEMENTS], ancestor;
     int records[ARBITRARY_NUMBER_OF_RECORDS][ARBITRARY_NUMBER_OF_ELEMENTS_PER_RECORD];
     int inputIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT];
     fillAllCellsIn2D(inputIn2D, UNSET);
@@ -603,12 +606,12 @@ int main()
                 currentChar = fgetc(file);
                 if (isALowerCaseLetter(currentChar) && stillOnAncestorName)
                 {
-                    treeElements[size].element[currentCharIndex] = currentChar;
+                    treeElements[size].name[currentCharIndex] = currentChar;
                     currentCharIndex++;
                 }
                 else if (currentChar == ' ' && stillOnAncestorName)
                 {
-                    treeElements[size].element[currentCharIndex] = '\0';
+                    treeElements[size].name[currentCharIndex] = '\0';
                     stillOnAncestorName = 0;
                 }
                 else if (isADigit(currentChar))
@@ -618,7 +621,7 @@ int main()
                 }
                 else if (currentChar == ')')
                 {
-                    treeElements[size].value = currentNumber;
+                    treeElements[size].valueOfAncestor = currentNumber;
                     currentNumber = 0;
                 }
                 else if (currentChar == '\n')
@@ -638,7 +641,6 @@ int main()
             removeTreeAncestors(treeElements, size);
             rewind(file);
 
-            count = 0;
             keepReading = 1;
             stillOnAncestorName = 1;
             currentCharIndex = 0;
@@ -649,50 +651,56 @@ int main()
                 {
                     if (stillOnAncestorName)
                     {
-                        ancestor[currentCharIndex] = currentChar;
+                        ancestorName[currentCharIndex] = currentChar;
                     }
                     else
                     {
-                        element[currentCharIndex] = currentChar;
+                        elementName[currentCharIndex] = currentChar;
                     }
                     currentCharIndex++;
                 }
                 else if (currentChar == '>')
                 {
-                    ancestor[currentCharIndex] = '\0';
+                    ancestorName[currentCharIndex] = '\0';
                     currentCharIndex = 0;
                     stillOnAncestorName = 0;
                 }
                 else if (currentChar == ',')
                 {
-                    element[currentCharIndex] = '\0';
-                    addAncestor(treeElements, size, element, ancestor);
+                    elementName[currentCharIndex] = '\0';
+                    addAncestor(treeElements, size, elementName, ancestorName);
                     currentCharIndex = 0;
                 }
                 else if (currentChar == '\n')
                 {
                     if (!stillOnAncestorName)
                     {
-                        element[currentCharIndex] = '\0';
-                        addAncestor(treeElements, size, element, ancestor);
+                        elementName[currentCharIndex] = '\0';
+                        addAncestor(treeElements, size, elementName, ancestorName);
                     }
                     currentCharIndex = 0;
-                    ancestor[0] = '\0';
+                    ancestorName[0] = '\0';
                     stillOnAncestorName = 1;
-                    count++;
                 }
                 else if (currentChar == EOF)
                 {
                     if (!stillOnAncestorName)
                     {
-                        element[currentCharIndex] = '\0';
-                        addAncestor(treeElements, size, element, ancestor);
+                        elementName[currentCharIndex] = '\0';
+                        addAncestor(treeElements, size, elementName, ancestorName);
                     }
                     keepReading = 0;
                 }
             }
-            strcpy(ancestor, firstElementWithoutAncestor(treeElements, size));
-            printf("Part 1 - The bottom program is called %s", ancestor);
+            ancestor = firstElementWithoutAncestor(treeElements, size);
+            printf("Part 1 - The bottom program is called %s\n", ancestor.name);
+            setValueOfAncestorAndChildren(treeElements, size, &ancestor);
+
+            // TBD: deserves a proper solution as it won't work for other inputs. For now, I got the solution by displaying the tree with a limited depth and going into the right branch
+            for (i = 0 ; i < size ; i++)
+                if (strcmp(treeElements[i].name, "orflty") == SAME_STRINGS)
+                    ancestor = treeElements[i];
+            displayChildren(treeElements, size, ancestor, 0);
             break;
 
             default:
@@ -863,13 +871,14 @@ void printCellsArrayIn2D(const int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY
     }
 }
 
+// Gets the first element in the tree that matches the element name and adds the specified ancestor to it
 int addAncestor(TreeElement elements[], int size, const char elementName[], const char ancestorName[])
 {
     int i = 0;
     for (i = 0 ; i < size ; i++)
-        if (strcmp(elementName, elements[i].element) == SAME_STRINGS)
+        if (strcmp(elementName, elements[i].name) == SAME_STRINGS)
         {
-            strcpy(elements[i].uniqueAncestor, ancestorName);
+            strcpy(elements[i].uniqueAncestorName, ancestorName);
             return 1;
         }
     return 0;
@@ -879,16 +888,39 @@ void removeTreeAncestors(TreeElement elements[], int size)
 {
     int i = 0;
     for (i = 0 ; i < 0 ; i++)
-    {
-        elements[i].uniqueAncestor[0] = '\0';
-    }
+        elements[i].uniqueAncestorName[0] = '\0';
 }
 
-char * firstElementWithoutAncestor(TreeElement elements[], int size)
+TreeElement firstElementWithoutAncestor(TreeElement elements[], int size)
 {
+    TreeElement defaultElement;
+    strcpy(defaultElement.name, "");
     int i = 0;
     for (i = 0 ; i < size ; i++)
-        if (elements[i].uniqueAncestor[0] == '\0')
-            return elements[i].element;
-    return "";
+        if (elements[i].uniqueAncestorName[0] == '\0')
+            return elements[i];
+    return defaultElement;
+}
+
+void displayChildren(TreeElement elements[], int size, const TreeElement ancestor, int depth)
+{
+    int i = 0;
+    for (i = 0 ; i < depth ; i++)
+        printf("\t");
+    printf("%s (%d) (Total: %d)\n", ancestor.name, ancestor.valueOfAncestor, ancestor.valueOfAncestorAndChildren);
+    if (depth >= MAX_DEPTH_TO_DISPLAY)
+        return;
+    for (i = 0 ; i < size ; i++)
+        if (strcmp(elements[i].uniqueAncestorName, ancestor.name) == SAME_STRINGS)
+            displayChildren(elements, size, elements[i], depth + 1);
+}
+
+int setValueOfAncestorAndChildren(TreeElement elements[], int size, TreeElement * pAncestor)
+{
+    int i = 0;
+    pAncestor->valueOfAncestorAndChildren = pAncestor->valueOfAncestor;
+    for (i = 0 ; i < size ; i++)
+        if (strcmp(elements[i].uniqueAncestorName, pAncestor->name) == SAME_STRINGS)
+            pAncestor->valueOfAncestorAndChildren += setValueOfAncestorAndChildren(elements, size, &(elements[i]));
+    return pAncestor->valueOfAncestorAndChildren;
 }

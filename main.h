@@ -7,9 +7,10 @@
 typedef struct TreeElement TreeElement;
 struct TreeElement
 {
-    char uniqueAncestor[TREE_ELEMENT_NAME_MAX_LENGTH];
-    char element[TREE_ELEMENT_NAME_MAX_LENGTH];
-    int value;
+    char uniqueAncestorName[TREE_ELEMENT_NAME_MAX_LENGTH];
+    char name[TREE_ELEMENT_NAME_MAX_LENGTH];
+    int valueOfAncestor;
+    int valueOfAncestorAndChildren;
 };
 
 #endif // MAIN_H_INCLUDED
