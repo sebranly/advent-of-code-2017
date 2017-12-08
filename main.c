@@ -113,7 +113,7 @@ int main()
 
     printf("\nCHALLENGE OF DAY %02d\n===================\n", dayOfChallenge);
 
-    result = sprintf(fileName, "inputDay%02d.txt", dayOfChallenge);
+    result = sprintf(fileName, "inputs/inputDay%02d.txt", dayOfChallenge);
     if (result < 0)
     {
         printf("An unexpected error occurred before reading the input file");
