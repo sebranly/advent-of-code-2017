@@ -2,62 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include "main.h"
-
-enum { ZERO_ASCII_CODE = 48, NINE_ASCII_CODE = 57, A_LOWER_CASE_ASCII_CODE = 97, Z_LOWER_CASE_ASCII_CODE = 122 };
-
-#define LATEST_AVAILABLE_CHALLENGE 8
-#define MAX_CHALLENGE 25
-
-#define UNSET -1
-#define EXIT_VALUE -1
-#define NOT_FOUND -1
-
-#define NUMBER_OF_LOWER_CASE_LETTERS 26
-
-#define ARBITRARY_ARRAY_LIMIT 3000
-// TBD - Note: day challenge 6 part 1 deserves an optimization because this is only a workaround so far (problem is memory limitation)
-#define ARBITRARY_NUMBER_OF_RECORDS 15000
-#define ARBITRARY_NUMBER_OF_ELEMENTS_PER_RECORD 30
-// The following value is a limit per dimension
-#define ARBITRARY_2D_ARRAY_LIMIT 100
-#define MAX_FILE_NAME_LENGTH 50
-#define STRING_MAX_LENGTH 30
-#define STRING_LIMITED_LENGTH 5
-#define MAX_ELEMENTS_PER_LINE 30
-#define SAME_STRINGS 0
-#define MAX_DEPTH_TO_DISPLAY 2
-
-#define NUMBER_OF_CARDINAL_DIRECTIONS 4
-
-enum { NORTH_WEST, NORTH_EAST, SOUTH_WEST, SOUTH_EAST };
-enum { NORTH, SOUTH, WEST, EAST };
-
-int isADigit(char c);
-int isALowerCaseLetter(char c);
-int toInteger(char digit);
-int nextSpiralDirection(int currentDirection);
-int valueIsBetween(int value, int min, int max);
-void moveOneStep(int * x, int * y, int currentDirection);
-void fillAllCells(int array[], int sizeArray, int value);
-void countLetters(const char * string, int array[NUMBER_OF_LOWER_CASE_LETTERS]);
-int minIndexOfMaxValue(int array[], int size);
-int differentArrays(int array1[], int array2[], int size);
-void copyFirstCells(int sourceArray[], int destinationArray[], int numberOfCellsToBeCopied);
-void fillAllCellsIn2D(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int value);
-int sumOfAdjacentCells(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int x, int y);
-void emptyInlineTextInput(char inlineInputAsText[MAX_ELEMENTS_PER_LINE][STRING_MAX_LENGTH]);
-void printCellsArrayIn2D(const int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int minX, int maxX, int minY, int maxY);
-int addAncestor(TreeElement elements[], int size, const char elementName[], const char ancestorName[]);
-void removeTreeAncestors(TreeElement elements[], int size);
-TreeElement firstElementWithoutAncestor(TreeElement elements[], int size);
-void displayChildren(TreeElement elements[], int size, const TreeElement ancestor, int depth);
-int setValueOfAncestorAndChildren(TreeElement elements[], int size, TreeElement * ancestor);
-int createNewRegister(Register * registers, int size, const char * name);
-int findRegister(const Register * registers, int size, const char * name);
-int sameStrings(const char * string1, const char * string2);
+#include "solutionTypes.h"
+#include "day01.h"
 
 int main()
 {
+    SolutionIntegers solutionIntegers;
     FILE* file = NULL;
     char currentChar = 0, c;
     char fileName[MAX_FILE_NAME_LENGTH];
@@ -65,10 +15,7 @@ int main()
     char ancestorName[TREE_ELEMENT_NAME_MAX_LENGTH], elementName[TREE_ELEMENT_NAME_MAX_LENGTH];
     char registerName[REGISTER_NAME_MAX_LENGTH], conditionalRegisterName[REGISTER_NAME_MAX_LENGTH];
     char operationString[STRING_LIMITED_LENGTH], conditionalString[STRING_LIMITED_LENGTH], operatorString[STRING_LIMITED_LENGTH];
-    int previousDigit = UNSET;
-    int currentDigit = UNSET;
-    int firstDigit = UNSET;
-    int i = 0, i2 = 0, j = 0, x = 0, y = 0, part = 1, size = 0, sign = 1, currentIndex = 0, currentCharIndex = 0, uniqueInputNumber = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, max2 = UNSET, sum = 0, sum2 = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, currentConditionalNumber, comparisonIndex = 0, inputLength = 0, halfInputLength = 0, dayOfChallenge = 0, result = 0;
+    int i = 0, i2 = 0, j = 0, x = 0, y = 0, part = 1, size = 0, sign = 1, currentIndex = 0, currentCharIndex = 0, uniqueInputNumber = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, max2 = UNSET, sum = 0, sum2 = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, currentConditionalNumber, dayOfChallenge = 0, result = 0;
     int beforeResetForDirection = UNSET, currentDirection = UNSET;
     // The following variables are used as booleans only
     int keepReading = 1, outOfArrayRange = 0, incorrectDayOfChallenge = 1, skipLine = 0, solutionIsFound = 0, stillOnAncestorName = 1;
@@ -118,6 +65,7 @@ int main()
     {
         printf("An unexpected error occurred before reading the input file");
     }
+    // TBD: remove it once every day challenge has its own .c file
     file = fopen(fileName, "r");
 
     if (file != NULL)
@@ -125,53 +73,9 @@ int main()
         switch (dayOfChallenge)
         {
             case 1:
-            while (keepReading)
-            {
-                currentChar = fgetc(file);
-                if (isADigit(currentChar))
-                {
-                    currentDigit = toInteger(currentChar);
-
-                    input[inputLength] = currentDigit;
-                    inputLength++;
-
-                    if (firstDigit == UNSET)
-                    {
-                        firstDigit = currentDigit;
-                    }
-                    else if (currentDigit == previousDigit) {
-                        sum += previousDigit;
-                    }
-
-                    previousDigit = currentDigit;
-                }
-                else
-                {
-                    keepReading = 0;
-                }
-            }
-
-            if (previousDigit == firstDigit)
-            {
-                sum += previousDigit;
-            }
-
-            printf("Part 1 - Sum for the input is: %d\n", sum);
-
-            sum = 0;
-            halfInputLength = inputLength / 2;
-            for (i = 0 ; i < inputLength ; i++)
-            {
-                if (i < halfInputLength)
-                    comparisonIndex = i + halfInputLength;
-                else {
-                    comparisonIndex = i - halfInputLength;
-                }
-
-                if (input[comparisonIndex] == input[i])
-                    sum += input[i];
-            }
-            printf("Part 2 - Sum for the input is: %d\n", sum);
+            solutionIntegers = getSolutionDay01(fileName);
+            printf("Part 1 - Sum for the input with next digit is: %d\n", solutionIntegers.solutionPart1);
+            printf("Part 2 - Sum for the input with halfway around digit is: %d\n", solutionIntegers.solutionPart2);
             break;
 
             case 2:
