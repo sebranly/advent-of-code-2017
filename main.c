@@ -4,6 +4,7 @@
 #include "main.h"
 #include "solutionTypes.h"
 #include "day01.h"
+#include "day09.h"
 
 int main()
 {
@@ -662,6 +663,12 @@ int main()
                     max = registers[i].value;
             printf("Part 1 - the largest value is any register is %d\n", max);
             printf("Part 2 - the highest value held in any register during the process was %d\n", max2);
+            break;
+
+            case 9:
+            solutionIntegers = getSolutionDay09(fileName);
+            printf("Part 1 - the total score for all groups is %d\n", solutionIntegers.solutionPart1);
+            printf("Part 2 - the total number of garbage elements is %d\n", solutionIntegers.solutionPart2);
             break;
 
             default:
