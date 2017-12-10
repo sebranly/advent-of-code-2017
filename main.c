@@ -3,12 +3,15 @@
 #include <string.h>
 #include "main.h"
 #include "solutionTypes.h"
+#include "stringLibrary.h"
 #include "day01.h"
 #include "day09.h"
+#include "day10.h"
 
 int main()
 {
     SolutionIntegers solutionIntegers;
+    SolutionIntegerString solutionIntegerString;
     FILE* file = NULL;
     char currentChar = 0, c;
     char fileName[MAX_FILE_NAME_LENGTH];
@@ -671,6 +674,12 @@ int main()
             printf("Part 2 - the total number of garbage elements is %d\n", solutionIntegers.solutionPart2);
             break;
 
+            case 10:
+            solutionIntegerString = getSolutionDay10(fileName);
+            printf("Part 1 - first number times second number equals %d\n", solutionIntegerString.solutionPart1);
+            printf("Part 2 - final hash is %s", solutionIntegerString.solutionPart2);
+            break;
+
             default:
             break;
         }
@@ -688,11 +697,6 @@ int main()
 int isADigit(char c)
 {
     return (c >= ZERO_ASCII_CODE && c <= NINE_ASCII_CODE);
-}
-
-int isALowerCaseLetter(char c)
-{
-    return (c >= A_LOWER_CASE_ASCII_CODE && c <= Z_LOWER_CASE_ASCII_CODE);
 }
 
 int toInteger(char digit)
@@ -753,17 +757,6 @@ void fillAllCells(int array[], int sizeArray, int value)
     int i;
     for (i = 0 ; i < sizeArray ; i++)
         array[i] = value;
-}
-
-void countLetters(const char * string, int array[NUMBER_OF_LOWER_CASE_LETTERS])
-{
-    int i = 0;
-    fillAllCells(array, NUMBER_OF_LOWER_CASE_LETTERS, 0);
-    while (string[i] != '\0')
-    {
-        array[string[i] - A_LOWER_CASE_ASCII_CODE]++;
-        i++;
-    }
 }
 
 int differentArrays(int array1[], int array2[], int size)
@@ -909,9 +902,4 @@ int createNewRegister(Register * registers, int size, const char * name)
     strcpy(newRegister.name, name);
     registers[size] = newRegister;
     return size + 1;
-}
-
-int sameStrings(const char * string1, const char * string2)
-{
-    return (strcmp(string1, string2) == SAME_STRINGS);
 }

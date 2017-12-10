@@ -1,7 +1,7 @@
 #ifndef MAIN_H_INCLUDED
 #define MAIN_H_INCLUDED
 
-enum { ZERO_ASCII_CODE = 48, NINE_ASCII_CODE = 57, A_LOWER_CASE_ASCII_CODE = 97, Z_LOWER_CASE_ASCII_CODE = 122 };
+enum { ZERO_ASCII_CODE = 48, NINE_ASCII_CODE = 57 };
 enum { NORTH_WEST, NORTH_EAST, SOUTH_WEST, SOUTH_EAST };
 enum { NORTH, SOUTH, WEST, EAST };
 
@@ -10,14 +10,12 @@ enum { NORTH, SOUTH, WEST, EAST };
 #define TREE_ELEMENT_NAME_MAX_LENGTH 20
 #define REGISTER_NAME_MAX_LENGTH 10
 
-#define LATEST_AVAILABLE_CHALLENGE 9
+#define LATEST_AVAILABLE_CHALLENGE 10
 #define MAX_CHALLENGE 25
 
 #define UNSET -1
 #define EXIT_VALUE -1
 #define NOT_FOUND -1
-
-#define NUMBER_OF_LOWER_CASE_LETTERS 26
 
 #define ARBITRARY_ARRAY_LIMIT 3000
 // TBD - Note: day challenge 6 part 1 deserves an optimization because this is only a workaround so far (problem is memory limitation)
@@ -29,7 +27,6 @@ enum { NORTH, SOUTH, WEST, EAST };
 #define STRING_MAX_LENGTH 30
 #define STRING_LIMITED_LENGTH 5
 #define MAX_ELEMENTS_PER_LINE 30
-#define SAME_STRINGS 0
 #define MAX_DEPTH_TO_DISPLAY 2
 
 #define NUMBER_OF_CARDINAL_DIRECTIONS 4
@@ -51,13 +48,11 @@ struct Register
 };
 
 int isADigit(char c);
-int isALowerCaseLetter(char c);
 int toInteger(char digit);
 int nextSpiralDirection(int currentDirection);
 int valueIsBetween(int value, int min, int max);
 void moveOneStep(int * x, int * y, int currentDirection);
 void fillAllCells(int array[], int sizeArray, int value);
-void countLetters(const char * string, int array[NUMBER_OF_LOWER_CASE_LETTERS]);
 int minIndexOfMaxValue(int array[], int size);
 int differentArrays(int array1[], int array2[], int size);
 void copyFirstCells(int sourceArray[], int destinationArray[], int numberOfCellsToBeCopied);
@@ -72,6 +67,5 @@ void displayChildren(TreeElement elements[], int size, const TreeElement ancesto
 int setValueOfAncestorAndChildren(TreeElement elements[], int size, TreeElement * ancestor);
 int createNewRegister(Register * registers, int size, const char * name);
 int findRegister(const Register * registers, int size, const char * name);
-int sameStrings(const char * string1, const char * string2);
 
 #endif // MAIN_H_INCLUDED

@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include "solutionTypes.h"
 #include "day01.h"
-// TBD: delete it once main.h is way shorter by exporting definitions for example
-#include "main.h"
 
 SolutionIntegers getSolutionDay01(const char * inputFilePath)
 {
