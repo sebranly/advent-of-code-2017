@@ -7,6 +7,7 @@
 #include "day01.h"
 #include "day09.h"
 #include "day10.h"
+#include "day11.h"
 
 int main()
 {
@@ -678,6 +679,12 @@ int main()
             solutionIntegerString = getSolutionDay10(fileName);
             printf("Part 1 - first number times second number equals %d\n", solutionIntegerString.solutionPart1);
             printf("Part 2 - final hash is %s", solutionIntegerString.solutionPart2);
+            break;
+
+            case 11:
+            solutionIntegers = getSolutionDay11(fileName);
+            printf("Part 1 - the fewest number of steps required to reach him is %d\n", solutionIntegers.solutionPart1);
+            printf("Part 2 - the furthest he ever got from his starting position is %d\n", solutionIntegers.solutionPart2);
             break;
 
             default:

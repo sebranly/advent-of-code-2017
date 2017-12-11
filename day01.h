@@ -1,6 +1,7 @@
 #ifndef DAY01_H_INCLUDED
 #define DAY01_H_INCLUDED
 
+#include "solutionTypes.h"
 // TBD: delete it once main.h is way shorter by exporting definitions for example
 #include "main.h"
 
