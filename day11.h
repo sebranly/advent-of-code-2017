@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "solutionTypes.h"
 #include "hexGrid.h"
 // TBD: delete it once main.h is way shorter by exporting definitions for example

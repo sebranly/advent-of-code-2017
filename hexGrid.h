@@ -1,7 +1,6 @@
 #ifndef HEXGRID_H_INCLUDED
 #define HEXGRID_H_INCLUDED
 
-#include <math.h>
 #include "stringLibrary.h"
 
 #define NUMBER_OF_HEX_AXES 3

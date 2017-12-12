@@ -4,10 +4,7 @@
 #include "main.h"
 #include "solutionTypes.h"
 #include "stringLibrary.h"
-#include "day01.h"
-#include "day09.h"
-#include "day10.h"
-#include "day11.h"
+#include "allDays.h"
 
 int main()
 {
@@ -685,6 +682,12 @@ int main()
             solutionIntegers = getSolutionDay11(fileName);
             printf("Part 1 - the fewest number of steps required to reach him is %d\n", solutionIntegers.solutionPart1);
             printf("Part 2 - the furthest he ever got from his starting position is %d\n", solutionIntegers.solutionPart2);
+            break;
+
+            case 12:
+            solutionIntegers = getSolutionDay12(fileName);
+            printf("Part 1 - number of programs in same group than program with ID 0 is %d\n", solutionIntegers.solutionPart1);
+            printf("Part 2 - number of groups is %d\n", solutionIntegers.solutionPart2);
             break;
 
             default:
