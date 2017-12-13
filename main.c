@@ -690,6 +690,12 @@ int main()
             printf("Part 2 - number of groups is %d\n", solutionIntegers.solutionPart2);
             break;
 
+            case 13:
+            solutionIntegers = getSolutionDay13(fileName);
+            printf("Part 1 - %d\n", solutionIntegers.solutionPart1);
+            printf("Part 2 - %d\n", solutionIntegers.solutionPart2);
+            break;
+
             default:
             break;
         }
