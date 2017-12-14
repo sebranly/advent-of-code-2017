@@ -91,7 +91,6 @@ SolutionIntegers getSolutionDay13(const char * inputFilePath)
             // displayCurrentSecurityState(layers, maxNumber + 1);
         }
         solution.solutionPart1 = tripSeverity;
-        printf("<%d>", solution.solutionPart1);
 
         // tripSeverity would be 0 even if detectedPlayer was true at layer 0 because of the formula so we have to check both
         if (tripSeverity == 0 && layers[0].detectedPlayer == 0)

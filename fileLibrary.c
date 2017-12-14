@@ -29,8 +29,26 @@ int numberOfNonEmptyLines(const char * inputFilePath)
             else
                 freshNewLine = 0;
         }
+        fclose(file);
         return counterOfLines;
     }
     else
         return -1;
+}
+
+void readUniqueLine(const char * inputFilePath, char * inputContent, int stringLength)
+{
+    FILE* file = NULL;
+    file = fopen(inputFilePath, "r");
+
+    if (file != NULL)
+    {
+        fgets(inputContent, stringLength, file);
+        fclose(file);
+    }
+    else
+    {
+        printf("The file with name %s could not be opened", inputFilePath);
+        exit(EXIT_FAILURE);
+    }
 }

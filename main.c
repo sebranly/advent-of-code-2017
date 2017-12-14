@@ -692,8 +692,14 @@ int main()
 
             case 13:
             solutionIntegers = getSolutionDay13(fileName);
-            printf("Part 1 - %d\n", solutionIntegers.solutionPart1);
-            printf("Part 2 - %d\n", solutionIntegers.solutionPart2);
+            printf("Part 1 - the severity of the whole trip is %d\n", solutionIntegers.solutionPart1);
+            printf("Part 2 - the fewest number of picoseconds that I need to delay the packet to pass through the firewall without being caught is %d\n", solutionIntegers.solutionPart2);
+            break;
+
+            case 14:
+            solutionIntegers = getSolutionDay14(fileName);
+            printf("Part 1 - %d squares are used\n", solutionIntegers.solutionPart1);
+            printf("Part 2 - %d regions are present\n", solutionIntegers.solutionPart2);
             break;
 
             default:
