@@ -9,7 +9,7 @@
 #include "stringLibrary.h"
 #include "fileLibrary.h"
 
-#define BITS_STRING_LENGTH ((FINAL_KNOT_HASH_STRING_LENGTH - 1) * 4 + 1) // Corresponds to 129 in our example because the knot hash has 32 hexadecimal digit
+#define BITS_STRING_LENGTH ((FINAL_KNOT_HASH_STRING_LENGTH - 1) * 4 + 1) // Corresponds to 129 in our example because the knot hash has 32 hexadecimal digits
 #define GRID_SIZE (BITS_STRING_LENGTH - 1)
 
 SolutionIntegers getSolutionDay14(const char * inputFilePath);

@@ -702,6 +702,12 @@ int main()
             printf("Part 2 - %d regions are present\n", solutionIntegers.solutionPart2);
             break;
 
+            case 15:
+            solutionIntegers = getSolutionDay15(fileName);
+            printf("Part 1 - Judge's final count is %d\n", solutionIntegers.solutionPart1);
+            printf("Part 2 - Judge's final count is %d\n", solutionIntegers.solutionPart2);
+            break;
+
             default:
             break;
         }

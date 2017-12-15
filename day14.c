@@ -76,7 +76,7 @@ void hexadecimalStringToBitsString(const char * hexadecimalString, char * bitsSt
         switch (hexadecimalString[i])
         {
             case '0':
-                strcpy(bits, "0000");
+            strcpy(bits, "0000");
                 break;
             case '1':
             strcpy(bits, "0001");
@@ -121,9 +121,9 @@ void hexadecimalStringToBitsString(const char * hexadecimalString, char * bitsSt
             strcpy(bits, "1110");
                 break;
             case 'f':
+            default:
             strcpy(bits, "1111");
                 break;
-
         }
         for (j = 0 ; j < 4 ; j++)
             bitsString[i * 4 + j] = bits[j];
