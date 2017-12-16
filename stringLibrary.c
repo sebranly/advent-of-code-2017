@@ -80,4 +80,5 @@ void spinString(char * string, int length, int spinSize)
         string[currentIndex] = string2[currentIndex];
         currentIndex++;
     }
+    free(string2);
 }

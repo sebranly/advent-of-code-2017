@@ -15,44 +15,6 @@ SolutionStrings getSolutionDay16(const char * inputFilePath)
     if (file != NULL)
     {
         initializeAlphabeticalSequence(programs, NUMBER_OF_LETTERS_DAY_16);
-        while (keepReading)
-        {
-            currentChar = fgetc(file);
-            if (currentChar == ',' || currentChar == '\n' || currentChar == EOF)
-            {
-                command[currentIndex] = '\0';
-                switch (command[0])
-                {
-                    case 'x':
-                        determineSwappedPositions(command, &position1, &position2);
-                        swapValuesInString(programs, position1, position2);
-                        break;
-                    case 'p':
-                        determineSwappedPrograms(command, &program1, &program2);
-                        determineSwappedPositionsBasedOnSwapPrograms(programs, &position1, &position2, program1, program2);
-                        swapValuesInString(programs, position1, position2);
-                        break;
-                    case 's':
-                        spinSize = determineSpinSize(command);
-                        spinString(programs, NUMBER_OF_LETTERS_DAY_16 + 1, spinSize);
-                        break;
-                    default:
-                        break;
-                }
-                if (currentChar == '\n' || currentChar == EOF)
-                    keepReading = 0;
-                else
-                    currentIndex = 0;
-            }
-            else
-            {
-                command[currentIndex] = currentChar;
-                currentIndex++;
-            }
-        }
-        strcpy(solution.solutionPart1, programs);
-
-        initializeAlphabeticalSequence(programs, NUMBER_OF_LETTERS_DAY_16);
         initializeAlphabeticalSequence(initialPrograms, NUMBER_OF_LETTERS_DAY_16);
         iterationLimit = DANCE_MAX_PERIOD;
         while (iteration < iterationLimit)
@@ -95,6 +57,8 @@ SolutionStrings getSolutionDay16(const char * inputFilePath)
                     currentIndex++;
                 }
             }
+            if (iteration == 0)
+                strcpy(solution.solutionPart1, programs);
             if (sameStrings(programs, initialPrograms))
             {
                 // We found the cycle so we just re-launch it with the appropriate number of iterations
