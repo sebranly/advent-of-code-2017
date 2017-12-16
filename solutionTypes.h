@@ -10,6 +10,13 @@ struct SolutionIntegers
     int solutionPart2;
 };
 
+typedef struct SolutionStrings SolutionStrings;
+struct SolutionStrings
+{
+    char solutionPart1[SOLUTION_STRING_SIZE];
+    char solutionPart2[SOLUTION_STRING_SIZE];
+};
+
 typedef struct SolutionIntegerString SolutionIntegerString;
 struct SolutionIntegerString
 {

@@ -9,6 +9,7 @@
 int main()
 {
     SolutionIntegers solutionIntegers;
+    SolutionStrings solutionStrings;
     SolutionIntegerString solutionIntegerString;
     FILE* file = NULL;
     char currentChar = 0, c;
@@ -708,6 +709,12 @@ int main()
             printf("Part 2 - Judge's final count is %d\n", solutionIntegers.solutionPart2);
             break;
 
+            case 16:
+            solutionStrings = getSolutionDay16(fileName);
+            printf("Part 1 - The programs are in the following order after one dance:\n%s\n", solutionStrings.solutionPart1);
+            printf("Part 2 - The programs are in the following order after way more than one dance:\n%s\n", solutionStrings.solutionPart2);
+            break;
+
             default:
             break;
         }
@@ -930,4 +937,11 @@ int createNewRegister(Register * registers, int size, const char * name)
     strcpy(newRegister.name, name);
     registers[size] = newRegister;
     return size + 1;
+}
+
+void swapValues(int * value1, int * value2)
+{
+    int tmp = *value1;
+    *value1 = *value2;
+    *value2 = tmp;
 }

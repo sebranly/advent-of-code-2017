@@ -9,5 +9,6 @@
 #include "day13.h"
 #include "day14.h"
 #include "day15.h"
+#include "day16.h"
 
 #endif // ALLDAYS_H_INCLUDED

@@ -10,7 +10,7 @@ enum { NORTH, SOUTH, WEST, EAST };
 #define TREE_ELEMENT_NAME_MAX_LENGTH 20
 #define REGISTER_NAME_MAX_LENGTH 10
 
-#define LATEST_AVAILABLE_CHALLENGE 15
+#define LATEST_AVAILABLE_CHALLENGE 16
 #define MAX_CHALLENGE 25
 
 #define UNSET -1
@@ -67,5 +67,6 @@ void displayChildren(TreeElement elements[], int size, const TreeElement ancesto
 int setValueOfAncestorAndChildren(TreeElement elements[], int size, TreeElement * ancestor);
 int createNewRegister(Register * registers, int size, const char * name);
 int findRegister(const Register * registers, int size, const char * name);
+void swapValues(int * value1, int * value2);
 
 #endif // MAIN_H_INCLUDED
