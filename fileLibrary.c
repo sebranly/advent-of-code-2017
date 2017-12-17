@@ -52,3 +52,22 @@ void readUniqueLine(const char * inputFilePath, char * inputContent, int stringL
         exit(EXIT_FAILURE);
     }
 }
+
+int readUniqueNumber(const char * inputFilePath)
+{
+    FILE* file = NULL;
+    file = fopen(inputFilePath, "r");
+
+    int number = 0;
+    char currentChar;
+
+    if (file != NULL)
+    {
+        while (isADigit(currentChar = fgetc(file)))
+            number = number * 10 + toInteger(currentChar);
+        return number;
+
+    }
+    printf("The file with name %s could not be opened", inputFilePath);
+    exit(EXIT_FAILURE);
+}

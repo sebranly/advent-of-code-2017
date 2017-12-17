@@ -715,6 +715,12 @@ int main()
             printf("Part 2 - The programs are in the following order after way more than one dance:\n%s\n", solutionStrings.solutionPart2);
             break;
 
+            case 17:
+            solutionIntegers = getSolutionDay17(fileName);
+            printf("Part 1 - The value after %d is %d\n", LIMIT_VALUE_DAY_17_PART_1, solutionIntegers.solutionPart1);
+            printf("Part 2 - The moment %d is inserted, the value after 0 is %d\n", LIMIT_VALUE_DAY_17_PART_2, solutionIntegers.solutionPart2);
+            break;
+
             default:
             break;
         }
