@@ -721,6 +721,12 @@ int main()
             printf("Part 2 - The moment %d is inserted, the value after 0 is %d\n", LIMIT_VALUE_DAY_17_PART_2, solutionIntegers.solutionPart2);
             break;
 
+            case 18:
+            solutionIntegers = getSolutionDay18(fileName);
+            printf("Part 1 - %d\n", solutionIntegers.solutionPart1);
+            printf("Part 2 - %d\n", solutionIntegers.solutionPart2);
+            break;
+
             default:
             break;
         }

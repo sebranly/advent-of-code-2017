@@ -15,14 +15,13 @@ SolutionIntegers getSolutionDay17(const char * inputFilePath)
         array[currentIndex] = size;
     }
 
+    solution.solutionPart1 = NO_VALUE_BEHIND;
     for (i = 0 ; i <= LIMIT_VALUE_DAY_17_PART_1 ; i++)
     {
         if (array[i] == LIMIT_VALUE_DAY_17_PART_1)
         {
             if (i != LIMIT_VALUE_DAY_17_PART_1)
                 solution.solutionPart1 = array[i + 1];
-            else
-                solution.solutionPart1 = -1;
             break;
         }
     }

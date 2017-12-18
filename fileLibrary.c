@@ -65,9 +65,47 @@ int readUniqueNumber(const char * inputFilePath)
     {
         while (isADigit(currentChar = fgetc(file)))
             number = number * 10 + toInteger(currentChar);
+        fclose(file);
         return number;
-
     }
     printf("The file with name %s could not be opened", inputFilePath);
     exit(EXIT_FAILURE);
+}
+
+void fillLinesIn2DArray(char **array, const int numberOfArrayLines, const char * inputFilePath)
+{
+    FILE* file = NULL;
+    file = fopen(inputFilePath, "r");
+
+    int lineIndex = 0, currentCharIndex = 0;
+    char currentChar = 0;
+
+    if (file != NULL)
+    {
+        do
+        {
+            currentChar = fgetc(file);
+            if (currentChar == '\n')
+            {
+                array[lineIndex][currentCharIndex] = '\0';
+                lineIndex++;
+                currentCharIndex = 0;
+            }
+            else if (currentChar != EOF)
+            {
+                array[lineIndex][currentCharIndex] = currentChar;
+                currentCharIndex++;
+            }
+            else
+            {
+                array[lineIndex][currentCharIndex] = '\0';
+            }
+        } while(lineIndex < numberOfArrayLines && currentChar != EOF);
+        fclose(file);
+    }
+    else
+    {
+        printf("The file with name %s could not be opened", inputFilePath);
+        exit(EXIT_FAILURE);
+    }
 }

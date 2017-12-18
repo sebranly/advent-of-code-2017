@@ -6,6 +6,7 @@
 #include "solutionTypes.h"
 #include "fileLibrary.h"
 
+#define NO_VALUE_BEHIND -1
 #define LIMIT_VALUE_DAY_17_PART_1 2017
 #define LIMIT_VALUE_DAY_17_PART_2 50000000
 

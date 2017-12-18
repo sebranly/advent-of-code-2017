@@ -51,6 +51,21 @@ int findFirstOccurrence(const char * string, char character)
     return i;
 }
 
+int findSecondOccurrence(const char * string, char character)
+{
+    int counter = 0, i = 0;
+    while (string[i] != '\0')
+    {
+        if (string[i] == character)
+            if (counter == 0)
+                counter++;
+            else
+                return i;
+        i++;
+    }
+    return CHARACTER_NOT_FOUND;
+}
+
 void spinString(char * string, int length, int spinSize)
 {
     int startingPoint = length - 1 - spinSize;
@@ -81,4 +96,29 @@ void spinString(char * string, int length, int spinSize)
         currentIndex++;
     }
     free(string2);
+}
+
+// Returns 1 if it could convert the portion of the string to an integer, otherwise 0
+int stringToInteger(const char * string, int startingIndex, int endingIndex, int * number)
+{
+    int index = startingIndex, currentNumber = 0;
+    int sign = 1, atLeastOneDigit =0;
+    while ((endingIndex == NO_ENDING_INDEX && string[index] != '\0') || (endingIndex != NO_ENDING_INDEX && index <= endingIndex))
+    {
+        if (string[index] == '-')
+            sign = -1;
+        else if (isADigit(string[index]))
+        {
+            atLeastOneDigit = 1;
+            currentNumber *= 10;
+            currentNumber += toInteger(string[index]);
+        }
+        index++;
+    }
+    if (atLeastOneDigit)
+    {
+        *number = sign * currentNumber;
+        return 1;
+    }
+    return 0;
 }
