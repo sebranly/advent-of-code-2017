@@ -3,6 +3,9 @@
 SolutionIntegers getSolutionDay18(const char * inputFilePath)
 {
     SolutionIntegers solution;
+    solution.solutionPart1 = -1;
+    solution.solutionPart2 = -1;
+
     DuetAssemblyCode assemblyCode;
     int i;
 

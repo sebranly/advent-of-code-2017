@@ -12,7 +12,7 @@ struct DuetAssemblyCode
     int numberOfInstructions;
     char **instructions;
     int currentInstructionIndex;
-    int assemblyRegister[NUMBER_OF_LOWER_CASE_LETTERS];
+    long long assemblyRegister[NUMBER_OF_LOWER_CASE_LETTERS];
     int recoverOperationExecuted;
     int frequencyLastSoundPlayed;
     int atLeastOneSoundPlayed;
