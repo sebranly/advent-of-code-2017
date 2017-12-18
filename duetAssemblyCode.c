@@ -5,17 +5,22 @@ void fillDuetAssemblyCodeInstructions(DuetAssemblyCode assemblyCode, const char 
     fillLinesIn2DArray(assemblyCode.instructions, assemblyCode.numberOfInstructions, inputFilePath);
 }
 
-void initializeDuetAssemblyCode(DuetAssemblyCode * assemblyCode)
+void initializeDuetAssemblyCode(DuetAssemblyCode * assemblyCode, int programId)
 {
     int i;
     assemblyCode->currentInstructionIndex = 0;
     assemblyCode->recoverOperationExecuted = 0;
     assemblyCode->atLeastOneSoundPlayed = 0;
     assemblyCode->frequencyLastSoundPlayed = 0;
+    assemblyCode->counterValuesSent = 0;
+    assemblyCode->programId = programId;
     for (i = 0 ; i < assemblyCode->numberOfInstructions ; i++)
         assemblyCode->instructions[i][0] = '\0';
     for (i = 0 ; i < NUMBER_OF_LOWER_CASE_LETTERS ; i++)
         assemblyCode->assemblyRegister[i] = 0;
+    assemblyCode->assemblyRegister['p' - A_LOWER_CASE_ASCII_CODE] = programId;
+    assemblyCode->valuesReceived = initializeQueue();
+    assemblyCode->programState = NOT_LOCKED;
 }
 
 void displayDuetAssemblyCodeInstructions(const DuetAssemblyCode assemblyCode)
@@ -25,17 +30,17 @@ void displayDuetAssemblyCodeInstructions(const DuetAssemblyCode assemblyCode)
         printf("Instruction %04d: %s\n", i, assemblyCode.instructions[i]);
 }
 
-void executeDuetAssemblyCodeInstruction(DuetAssemblyCode * assemblyCode)
+void executeDuetAssemblyCodeInstruction(DuetAssemblyCode * assemblyCode, DuetAssemblyCode * otherAssemblyCode, int part)
 {
     char instruction[INSTRUCTION_STRING_LENGTH];
-    int number, indexSecondSpace;
+    long long number;
+    int indexSecondSpace;
     int correctConversion;
     strcpy(instruction, assemblyCode->instructions[assemblyCode->currentInstructionIndex]);
-    // printf("%s | ", instruction);
 
     if (isSetInstruction(instruction) || isAddInstruction(instruction) || isMulInstruction(instruction) || isModInstruction(instruction))
     {
-        correctConversion = stringToInteger(instruction, 6, NO_ENDING_INDEX, &number);
+        correctConversion = stringToLongLong(instruction, 6, NO_ENDING_INDEX, &number);
         // In that case it was a register like 'a' for example
         if (!correctConversion)
             number = assemblyCode->assemblyRegister[instruction[6] - A_LOWER_CASE_ASCII_CODE];
@@ -54,36 +59,51 @@ void executeDuetAssemblyCodeInstruction(DuetAssemblyCode * assemblyCode)
     }
     else if (isSndInstruction(instruction))
     {
-        correctConversion = stringToInteger(instruction, 4, NO_ENDING_INDEX, &number);
+        correctConversion = stringToLongLong(instruction, 4, NO_ENDING_INDEX, &number);
         // In that case it was a register like 'a' for example
         if (!correctConversion)
             number = assemblyCode->assemblyRegister[instruction[4] - A_LOWER_CASE_ASCII_CODE];
         assemblyCode->atLeastOneSoundPlayed = 1;
         assemblyCode->frequencyLastSoundPlayed = number;
 
+        if (part == 2)
+        {
+            (assemblyCode->counterValuesSent)++;
+            addToQueue(otherAssemblyCode->valuesReceived, number);
+        }
+
         (assemblyCode->currentInstructionIndex)++;
     }
     else if (isRcvInstruction(instruction))
     {
-        correctConversion = stringToInteger(instruction, 4, NO_ENDING_INDEX, &number);
-        // In that case it was a register like 'a' for example
-        if (!correctConversion)
-            number = assemblyCode->assemblyRegister[instruction[4] - A_LOWER_CASE_ASCII_CODE];
-        if (number != 0)
-            assemblyCode->recoverOperationExecuted = 1;
-
-        (assemblyCode->currentInstructionIndex)++;
+        if (part == 1)
+        {
+            if (assemblyCode->assemblyRegister[instruction[4] - A_LOWER_CASE_ASCII_CODE] != 0)
+                assemblyCode->recoverOperationExecuted = 1;
+            (assemblyCode->currentInstructionIndex)++;
+        }
+        else if (part == 2)
+        {
+            if (getQueueLength(assemblyCode->valuesReceived) == 0)
+                assemblyCode->programState = LOCKED;
+            else
+            {
+                assemblyCode->programState = NOT_LOCKED;
+                assemblyCode->assemblyRegister[instruction[4] - A_LOWER_CASE_ASCII_CODE] = getFromQueue(assemblyCode->valuesReceived);
+                (assemblyCode->currentInstructionIndex)++;
+            }
+        }
     }
     else if (isJgzInstruction(instruction))
     {
         indexSecondSpace = findSecondOccurrence(instruction, ' ');
-        correctConversion = stringToInteger(instruction, 4, indexSecondSpace - 1, &number);
+        correctConversion = stringToLongLong(instruction, 4, indexSecondSpace - 1, &number);
         // In that case it was a register like 'a' for example
         if (!correctConversion)
             number = assemblyCode->assemblyRegister[instruction[4] - A_LOWER_CASE_ASCII_CODE];
         if (number > 0)
         {
-            correctConversion = stringToInteger(instruction, indexSecondSpace + 1, NO_ENDING_INDEX, &number);
+            correctConversion = stringToLongLong(instruction, indexSecondSpace + 1, NO_ENDING_INDEX, &number);
             // In that case it was a register like 'a' for example
             if (!correctConversion)
                 number = assemblyCode->assemblyRegister[instruction[indexSecondSpace + 1] - A_LOWER_CASE_ASCII_CODE];

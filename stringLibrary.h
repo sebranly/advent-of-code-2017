@@ -23,6 +23,6 @@ void swapValuesInString(char * string, int position1, int position2);
 int findFirstOccurrence(const char * string, char character);
 int findSecondOccurrence(const char * string, char character);
 void spinString(char * string, int length, int spinSize);
-int stringToInteger(const char * string, int startingIndex, int endingIndex, int * integer);
+int stringToLongLong(const char * string, int startingIndex, int endingIndex, long long * integer);
 
 #endif // STRINGLIBRARY_H_INCLUDED

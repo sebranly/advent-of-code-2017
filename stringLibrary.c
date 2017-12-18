@@ -99,9 +99,10 @@ void spinString(char * string, int length, int spinSize)
 }
 
 // Returns 1 if it could convert the portion of the string to an integer, otherwise 0
-int stringToInteger(const char * string, int startingIndex, int endingIndex, int * number)
+int stringToLongLong(const char * string, int startingIndex, int endingIndex, long long * number)
 {
-    int index = startingIndex, currentNumber = 0;
+    int index = startingIndex;
+    long long currentNumber = 0;
     int sign = 1, atLeastOneDigit =0;
     while ((endingIndex == NO_ENDING_INDEX && string[index] != '\0') || (endingIndex != NO_ENDING_INDEX && index <= endingIndex))
     {
