@@ -72,6 +72,28 @@ int readUniqueNumber(const char * inputFilePath)
     exit(EXIT_FAILURE);
 }
 
+int lengthFirstLine(const char * inputFilePath)
+{
+    FILE* file = NULL;
+    file = fopen(inputFilePath, "r");
+    int length = 0;
+    char currentChar;
+
+    if (file != NULL)
+    {
+        do
+        {
+            currentChar = fgetc(file);
+            length++;
+        } while (currentChar != EOF && currentChar != '\n');
+
+        fclose(file);
+        return length - 1;
+    }
+    printf("The file with name %s could not be opened", inputFilePath);
+    exit(EXIT_FAILURE);
+}
+
 void fillLinesIn2DArray(char **array, const int numberOfArrayLines, const char * inputFilePath)
 {
     FILE* file = NULL;

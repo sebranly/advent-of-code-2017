@@ -24,4 +24,11 @@ struct SolutionIntegerString
     char solutionPart2[SOLUTION_STRING_SIZE];
 };
 
+typedef struct SolutionStringInteger SolutionStringInteger;
+struct SolutionStringInteger
+{
+    char solutionPart1[SOLUTION_STRING_SIZE];
+    int solutionPart2;
+};
+
 #endif // SOLUTIONTYPES_H_INCLUDED

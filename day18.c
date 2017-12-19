@@ -49,5 +49,9 @@ SolutionIntegers getSolutionDay18(const char * inputFilePath)
         free(assemblyCode.instructions[i]);
     free(assemblyCode.instructions);
 
+    for (i = 0 ; i < assemblyCode2.numberOfInstructions ; i++)
+        free(assemblyCode2.instructions[i]);
+    free(assemblyCode2.instructions);
+
     return solution;
 }

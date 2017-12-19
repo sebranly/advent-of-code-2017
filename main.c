@@ -11,6 +11,7 @@ int main()
     SolutionIntegers solutionIntegers;
     SolutionStrings solutionStrings;
     SolutionIntegerString solutionIntegerString;
+    SolutionStringInteger solutionStringInteger;
     FILE* file = NULL;
     char currentChar = 0, c;
     char fileName[MAX_FILE_NAME_LENGTH];
@@ -725,6 +726,12 @@ int main()
             solutionIntegers = getSolutionDay18(fileName);
             printf("Part 1 - %d\n", solutionIntegers.solutionPart1);
             printf("Part 2 - %d\n", solutionIntegers.solutionPart2);
+            break;
+
+            case 19:
+            solutionStringInteger = getSolutionDay19(fileName);
+            printf("Part 1 - The letters were picked in that order: %s\n", solutionStringInteger.solutionPart1);
+            printf("Part 2 - There were %d steps\n", solutionStringInteger.solutionPart2);
             break;
 
             default:

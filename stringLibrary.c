@@ -5,6 +5,11 @@ int isALowerCaseLetter(char c)
     return (c >= A_LOWER_CASE_ASCII_CODE && c <= Z_LOWER_CASE_ASCII_CODE);
 }
 
+int isAnUpperCaseLetter(char c)
+{
+    return (c >= 'A' && c <= 'Z');
+}
+
 void countLetters(const char * string, int array[NUMBER_OF_LOWER_CASE_LETTERS])
 {
     int i = 0;
