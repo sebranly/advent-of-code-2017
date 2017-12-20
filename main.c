@@ -734,6 +734,12 @@ int main()
             printf("Part 2 - There were %d steps\n", solutionStringInteger.solutionPart2);
             break;
 
+            case 20:
+            solutionIntegers = getSolutionDay20(fileName);
+            printf("Part 1 - The particle that will stay closest to position <0,0,0> in the long term is #%d\n", solutionIntegers.solutionPart1);
+            printf("Part 2 - Number of particles that are left after all collisions are resolved: %d\n", solutionIntegers.solutionPart2);
+            break;
+
             default:
             break;
         }

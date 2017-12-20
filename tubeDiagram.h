@@ -6,19 +6,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "main.h"
-
-typedef struct Coordinates Coordinates;
-struct Coordinates
-{
-    int x;
-    int y;
-};
+#include "coordinates.h"
 
 typedef struct TubeDiagram TubeDiagram;
 struct TubeDiagram
 {
-    Coordinates vectorNextMove;
-    Coordinates currentPosition;
+    Coordinates2D vectorNextMove;
+    Coordinates2D currentPosition;
     char **diagram;
     char *path;
     int currentPathIndex;
