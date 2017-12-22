@@ -1,5 +1,4 @@
 #include "day20.h"
-#define MAX_PAR 1000
 
 SolutionIntegers getSolutionDay20(const char * inputFilePath)
 {
@@ -9,7 +8,7 @@ SolutionIntegers getSolutionDay20(const char * inputFilePath)
     int currentNumber = 0, chevronIndex = NO_FIELD, currentLine = 0, axisIndex = NO_AXIS, i, j, iteration;
     int sign = 1;
     unsigned long long minDistanceFromOrigin = 0;
-    int idParticleClosestToZero = 0;
+    int idParticleClosestToOrigin = 0;
     int numberOfDestroyedParticles = 0;
     int stepsPrint = 25;
 
@@ -68,17 +67,17 @@ SolutionIntegers getSolutionDay20(const char * inputFilePath)
             particles[i].acceleration.distanceFromOrigin = calculateDistanceFrom3DOrigin(particles[i].acceleration);
             if (i == 0)
             {
-                idParticleClosestToZero = 0;
+                idParticleClosestToOrigin = 0;
                 minDistanceFromOrigin = particles[0].acceleration.distanceFromOrigin;
             }
             else if (particles[i].acceleration.distanceFromOrigin < minDistanceFromOrigin)
             {
                 // In the long term, the only vector that dictates the closest distance from the origin among all particles is the acceleration vector
-                idParticleClosestToZero = i;
+                idParticleClosestToOrigin = i;
                 minDistanceFromOrigin = particles[i].acceleration.distanceFromOrigin;
             }
         }
-        solution.solutionPart1 = idParticleClosestToZero;
+        solution.solutionPart1 = idParticleClosestToOrigin;
 
         iteration = 0;
         // TBD: think about how to determine that number in an accurate way

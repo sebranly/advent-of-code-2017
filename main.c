@@ -740,6 +740,12 @@ int main()
             printf("Part 2 - Number of particles that are left after all collisions are resolved: %d\n", solutionIntegers.solutionPart2);
             break;
 
+            case 21:
+            solutionIntegers = getSolutionDay21(fileName);
+            printf("Part 1 - %d pixels stay on after %d iterations\n", solutionIntegers.solutionPart1, LIMIT_VALUE_DAY_21_PART_1);
+            printf("Part 2 - %d pixels stay on after %d iterations\n", solutionIntegers.solutionPart2, LIMIT_VALUE_DAY_21_PART_2);
+            break;
+
             default:
             break;
         }
