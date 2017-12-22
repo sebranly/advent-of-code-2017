@@ -11,6 +11,12 @@
 #define MAX_INPUT_PATTERN_SIZE 3
 #define MAX_OUTPUT_PATTERN_SIZE 4
 
+#define CELL '#'
+#define NO_CELL '.'
+
+#define NUMBER_OF_2_PER_2_INPUT_COMBINATIONS 6
+enum { ZERO_CELLS, ONE_CELL, TWO_DIAGONAL_CELLS, TWO_ADJACENT_CELLS, THREE_CELLS, FOUR_CELLS };
+
 typedef struct PatternRelation PatternRelation;
 struct PatternRelation
 {
@@ -21,7 +27,9 @@ struct PatternRelation
 };
 
 SolutionIntegers getSolutionDay21(const char * inputFilePath);
-void initializePattern(char **pattern);
+int initializePattern(char **pattern);
+int initialize2Per2Pattern(char ** pattern, int combinationOf2Per2);
+int get2Per2Combination(char **pattern, int startingX, int startingY);
 int evolvePatternOverGenerations(char **pattern, char **patternCopy, int sizePattern, PatternRelation * patternRelations, int numberOfPatternRelations, int numberOfGenerations);
 void determineOutputPatternBasedOnInputPattern(char inputPattern[MAX_INPUT_PATTERN_SIZE][MAX_INPUT_PATTERN_SIZE], char outputPattern[MAX_OUTPUT_PATTERN_SIZE][MAX_OUTPUT_PATTERN_SIZE], PatternRelation * patternRelations, int numberOfPatternRelations, int inputPatternSize);
 int identicalArray2D(char a[MAX_INPUT_PATTERN_SIZE][MAX_INPUT_PATTERN_SIZE], char b[MAX_INPUT_PATTERN_SIZE][MAX_INPUT_PATTERN_SIZE], int size);

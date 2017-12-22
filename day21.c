@@ -5,9 +5,10 @@ SolutionIntegers getSolutionDay21(const char * inputFilePath)
     SolutionIntegers solution;
     int keepReading = 1, beforeOutput = 1;
     int currentLine = 0;
-    int x, y, i, j, numberOfPatternRelations = numberOfNonEmptyLines(inputFilePath);
-    int size = 3, iteration;
+    int x, y, i, j, combinationIndex, numberOfPatternRelations = numberOfNonEmptyLines(inputFilePath);
+    int size = 3, iteration, numberOfCells;
     char currentChar;
+    int occurrencesOfCombinations[NUMBER_OF_2_PER_2_INPUT_COMBINATIONS] = {0};
     PatternRelation * patternRelations;
 
     char **pattern;
@@ -52,7 +53,7 @@ SolutionIntegers getSolutionDay21(const char * inputFilePath)
         {
             currentChar = fgetc(file);
 
-            if (currentChar == '.' || currentChar == '#')
+            if (currentChar == NO_CELL || currentChar == CELL)
             {
                 if (beforeOutput)
                     patternRelations[currentLine].inputPattern[x][y] = currentChar;
@@ -86,14 +87,36 @@ SolutionIntegers getSolutionDay21(const char * inputFilePath)
             }
         }
 
-        initializePattern(pattern);
-        size = evolvePatternOverGenerations(pattern, patternCopy, 3, patternRelations, numberOfPatternRelations, LIMIT_VALUE_DAY_21_PART_1);
+        size = initializePattern(pattern);
+        size = evolvePatternOverGenerations(pattern, patternCopy, size, patternRelations, numberOfPatternRelations, LIMIT_VALUE_DAY_21_PART_1);
 
         solution.solutionPart1 = 0;
         for (i = 0 ; i < size ; i++)
             for (j = 0 ; j < size ; j++)
-                if (pattern[i][j] == '#')
+                if (pattern[i][j] == CELL)
                     (solution.solutionPart1)++;
+
+        // We take a look at the shape of the final grid by dividing it into a lot of elementary 2x2 grids
+        for (i = 0 ; i < size ; i += 2)
+            for (j = 0 ; j < size ; j += 2)
+                occurrencesOfCombinations[get2Per2Combination(pattern, i, j)]++;
+
+        solution.solutionPart2 = 0;
+        // We make each type of 2x2 grid evolve from part 1's iteration to part 2's iteration
+        for (combinationIndex = 0 ; combinationIndex < NUMBER_OF_2_PER_2_INPUT_COMBINATIONS ; combinationIndex++)
+        {
+            if (occurrencesOfCombinations[combinationIndex] > 0)
+            {
+                size = initialize2Per2Pattern(pattern, combinationIndex);
+                size = evolvePatternOverGenerations(pattern, patternCopy, size, patternRelations, numberOfPatternRelations, LIMIT_VALUE_DAY_21_PART_2 - LIMIT_VALUE_DAY_21_PART_1);
+                numberOfCells = 0;
+                for (i = 0 ; i < size ; i++)
+                    for (j = 0 ; j < size ; j++)
+                        if (pattern[i][j] == CELL)
+                            numberOfCells++;
+                solution.solutionPart2 += occurrencesOfCombinations[combinationIndex] * numberOfCells;
+            }
+        }
 
         for (i = 0 ; i < maxPatternSize ; i++)
             free(pattern[i]);
@@ -115,19 +138,102 @@ SolutionIntegers getSolutionDay21(const char * inputFilePath)
     }
 }
 
-void initializePattern(char **pattern)
+int initializePattern(char **pattern)
 {
-    pattern[0][0] = '.';
-    pattern[1][0] = '#';
-    pattern[2][0] = '.';
+    pattern[0][0] = NO_CELL;
+    pattern[1][0] = CELL;
+    pattern[2][0] = NO_CELL;
 
-    pattern[0][1] = '.';
-    pattern[1][1] = '.';
-    pattern[2][1] = '#';
+    pattern[0][1] = NO_CELL;
+    pattern[1][1] = NO_CELL;
+    pattern[2][1] = CELL;
 
-    pattern[0][2] = '#';
-    pattern[1][2] = '#';
-    pattern[2][2] = '#';
+    pattern[0][2] = CELL;
+    pattern[1][2] = CELL;
+    pattern[2][2] = CELL;
+
+    return 3;
+}
+
+int initialize2Per2Pattern(char ** pattern, int combinationOf2Per2)
+{
+    int i, j;
+    switch (combinationOf2Per2)
+    {
+        case ZERO_CELLS:
+            for (i = 0 ; i < 2 ; i++)
+                for (j = 0 ; j < 2 ; j++)
+                    pattern[i][j] = NO_CELL;
+            break;
+
+        case ONE_CELL:
+            for (i = 0 ; i < 2 ; i++)
+                for (j = 0 ; j < 2 ; j++)
+                    pattern[i][j] = NO_CELL;
+            pattern[0][0] = CELL;
+            break;
+
+        case TWO_DIAGONAL_CELLS:
+            pattern[0][0] = NO_CELL;
+            pattern[0][1] = CELL;
+            pattern[1][0] = CELL;
+            pattern[1][1] = NO_CELL;
+            break;
+
+        case TWO_ADJACENT_CELLS:
+            pattern[0][0] = CELL;
+            pattern[0][1] = CELL;
+            pattern[1][0] = NO_CELL;
+            pattern[1][1] = NO_CELL;
+            break;
+
+        case THREE_CELLS:
+            for (i = 0 ; i < 2 ; i++)
+                for (j = 0 ; j < 2 ; j++)
+                    pattern[i][j] = CELL;
+            pattern[0][0] = NO_CELL;
+            break;
+
+        case FOUR_CELLS:
+            for (i = 0 ; i < 2 ; i++)
+                for (j = 0 ; j < 2 ; j++)
+                    pattern[i][j] = CELL;
+            break;
+    }
+    return 2;
+}
+
+// Only focuses on a 2x2 portion of the pattern grid
+int get2Per2Combination(char **pattern, int startingX, int startingY)
+{
+    int i, j, numberOfCells = 0;
+    for (i = 0 ; i < 2 ; i++)
+        for (j = 0 ; j < 2 ; j++)
+            if (pattern[startingX + i][startingY + j] == CELL)
+                numberOfCells++;
+
+    switch (numberOfCells)
+    {
+        case 0:
+            return ZERO_CELLS;
+            break;
+        case 1:
+            return ONE_CELL;
+            break;
+        case 2:
+            if ((pattern[startingX][startingY] == CELL && pattern[startingX + 1][startingY + 1] == CELL)
+                || (pattern[startingX + 1][startingY] == CELL && pattern[startingX][startingY + 1] == CELL))
+                return TWO_DIAGONAL_CELLS;
+            return TWO_ADJACENT_CELLS;
+            break;
+        case 3:
+            return THREE_CELLS;
+            break;
+        case 4:
+        default:
+            return FOUR_CELLS;
+            break;
+    }
 }
 
 int evolvePatternOverGenerations(char **pattern, char **patternCopy, int sizePatternInput, PatternRelation * patternRelations, int numberOfPatternRelations, int numberOfGenerations)
