@@ -9,16 +9,14 @@ SolutionIntegers getSolutionDay22(const char * inputFilePath)
     // We calculate the offset of the input grid by taking this simulation grid as the reference
     int offsetInput = LIMIT_VALUE_DAY_22_PART_1 / 2 + 1 - sizeInput / 2;
     PositiveCoordinates2D currentPosition;
-    // We start at the middle of the grid
-    currentPosition.x = LIMIT_VALUE_DAY_22_PART_1 / 2 + 1;
-    currentPosition.y = LIMIT_VALUE_DAY_22_PART_1 / 2 + 1;
-    int x = offsetInput, y = offsetInput, i, iteration, numberOfIterationsCausingInfection = 0;
+    int x, y, i, iteration, numberOfIterationsCausingInfection, partNumber;
     // One iteration contaminates one node max so the following number is way sufficient to store all the infected nodes
     // whatever the number of infected nodes in the input is
     int maxNumberOfInfectedNodesPossible = sizeInput * sizeInput + LIMIT_VALUE_DAY_22_PART_1;
-    int numberOfReferencedNodes = 0;
-    int keepReading = 1, currentPositionIsInfected = 0;
-    int currentDirection = NORTH;
+    int numberOfReferencedNodes;
+    int keepReading, currentPositionIsInfected;
+    currentPositionIsInfected = 0;
+    int currentDirection;
     // This variable will reference all the nodes that are or have been infected by the past
     // It will never reference a node that has never been infected
     Node * nodes;
@@ -35,55 +33,69 @@ SolutionIntegers getSolutionDay22(const char * inputFilePath)
             printf("An error occurred because of memory limitation\n");
             exit(EXIT_FAILURE);
         }
-
-        while (keepReading)
+        for (partNumber = 1 ; partNumber <= 2 ; partNumber++)
         {
-            currentChar = fgetc(file);
-            if (currentChar == INFECTED_NODE)
-            {
-                nodes[numberOfReferencedNodes].infected = 1;
-                nodes[numberOfReferencedNodes].coordinates.x = x;
-                nodes[numberOfReferencedNodes].coordinates.y = y;
-                numberOfReferencedNodes++;
+            // We start at the middle of the grid
+            currentPosition.x = LIMIT_VALUE_DAY_22_PART_1 / 2 + 1;
+            currentPosition.y = LIMIT_VALUE_DAY_22_PART_1 / 2 + 1;
+            x = offsetInput;
+            y = offsetInput;
+            numberOfIterationsCausingInfection = 0;
+            numberOfReferencedNodes = 0;
+            keepReading = 1;
+            currentDirection = NORTH;
+            if (partNumber == 2)
+                rewind(file);
 
-                x++;
-            }
-            else if (currentChar == CLEAN_NODE)
-                x++;
-            else if (currentChar == '\n')
+            while (keepReading)
             {
-                y++;
-                x = offsetInput;
-            }
-            else if (currentChar == EOF)
-                keepReading = 0;
-        }
-
-        for (iteration = 0 ; iteration < LIMIT_VALUE_DAY_22_PART_1 ; iteration++)
-        {
-            currentPositionIsInfected = 0;
-            for (i = 0 ; i < numberOfReferencedNodes && !currentPositionIsInfected ; i++)
-            {
-                if (nodes[i].infected && identicalPositiveCoordinates2D(nodes[i].coordinates, currentPosition))
+                currentChar = fgetc(file);
+                if (currentChar == INFECTED_NODE)
                 {
-                    changeDirection(&currentDirection, TURN_RIGHT);
-                    currentPositionIsInfected = 1;
+                    nodes[numberOfReferencedNodes].infected = 1;
+                    nodes[numberOfReferencedNodes].coordinates.x = x;
+                    nodes[numberOfReferencedNodes].coordinates.y = y;
+                    numberOfReferencedNodes++;
 
-                    // Due to step 2 of the algorithm
-                    nodes[i].infected = 0;
+                    x++;
                 }
+                else if (currentChar == CLEAN_NODE)
+                    x++;
+                else if (currentChar == '\n')
+                {
+                    y++;
+                    x = offsetInput;
+                }
+                else if (currentChar == EOF)
+                    keepReading = 0;
             }
-            if (!currentPositionIsInfected)
+
+            for (iteration = 0 ; iteration < LIMIT_VALUE_DAY_22_PART_1 ; iteration++)
             {
-                changeDirection(&currentDirection, TURN_LEFT);
-                // Due to step 2 of the algorithm
-                numberOfIterationsCausingInfection++;
-                nodes[numberOfReferencedNodes].infected = 1;
-                nodes[numberOfReferencedNodes].coordinates.x = currentPosition.x;
-                nodes[numberOfReferencedNodes].coordinates.y = currentPosition.y;
-                numberOfReferencedNodes++;
+                currentPositionIsInfected = 0;
+                for (i = 0 ; i < numberOfReferencedNodes && !currentPositionIsInfected ; i++)
+                {
+                    if (nodes[i].infected && identicalPositiveCoordinates2D(nodes[i].coordinates, currentPosition))
+                    {
+                        changeDirection(&currentDirection, TURN_RIGHT);
+                        currentPositionIsInfected = 1;
+
+                        // Due to step 2 of the algorithm
+                        nodes[i].infected = 0;
+                    }
+                }
+                if (!currentPositionIsInfected)
+                {
+                    changeDirection(&currentDirection, TURN_LEFT);
+                    // Due to step 2 of the algorithm
+                    numberOfIterationsCausingInfection++;
+                    nodes[numberOfReferencedNodes].infected = 1;
+                    nodes[numberOfReferencedNodes].coordinates.x = currentPosition.x;
+                    nodes[numberOfReferencedNodes].coordinates.y = currentPosition.y;
+                    numberOfReferencedNodes++;
+                }
+                moveOneNode(&currentPosition, currentDirection);
             }
-            moveOneNode(&currentPosition, currentDirection);
         }
         solution.solutionPart1 = numberOfIterationsCausingInfection;
         solution.solutionPart2 = 0;

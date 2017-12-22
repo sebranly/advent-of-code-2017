@@ -748,7 +748,7 @@ int main()
 
             case 22:
             solutionIntegers = getSolutionDay22(fileName);
-            printf("Part 1 - After a total of %d bursts of activity, %d bursts will have caused an infection\n", LIMIT_VALUE_DAY_22_PART_1,  solutionIntegers.solutionPart1);
+            printf("Part 1 - After a total of %d bursts of activity, %d bursts will have caused an infection\n", LIMIT_VALUE_DAY_22_PART_1, solutionIntegers.solutionPart1);
             printf("Part 2 - %d\n", solutionIntegers.solutionPart2);
             break;
 
