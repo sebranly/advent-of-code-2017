@@ -14,3 +14,8 @@ int identicalCoordinates3D(Coordinates3D coordinates1, Coordinates3D coordinates
 {
     return coordinates1.x == coordinates2.x && coordinates1.y == coordinates2.y && coordinates1.z == coordinates2.z;
 }
+
+int identicalPositiveCoordinates2D(PositiveCoordinates2D coordinates1, PositiveCoordinates2D coordinates2)
+{
+    return coordinates1.x == coordinates2.x && coordinates1.y == coordinates2.y;
+}

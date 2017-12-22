@@ -15,5 +15,6 @@
 #include "day19.h"
 #include "day20.h"
 #include "day21.h"
+#include "day22.h"
 
 #endif // ALLDAYS_H_INCLUDED

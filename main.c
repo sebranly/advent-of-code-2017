@@ -746,6 +746,12 @@ int main()
             printf("Part 2 - %d pixels stay on after %d iterations\n", solutionIntegers.solutionPart2, LIMIT_VALUE_DAY_21_PART_2);
             break;
 
+            case 22:
+            solutionIntegers = getSolutionDay22(fileName);
+            printf("Part 1 - After a total of %d bursts of activity, %d bursts will have caused an infection\n", LIMIT_VALUE_DAY_22_PART_1,  solutionIntegers.solutionPart1);
+            printf("Part 2 - %d\n", solutionIntegers.solutionPart2);
+            break;
+
             default:
             break;
         }
