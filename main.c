@@ -755,7 +755,7 @@ int main()
             case 23:
             solutionIntegers = getSolutionDay23(fileName);
             printf("Part 1 - The mul instruction is invoked %d times\n", solutionIntegers.solutionPart1);
-            printf("Part 2 - WIP");
+            printf("Part 2 - The value left in h register would be %d\n", solutionIntegers.solutionPart2);
             break;
 
             default:

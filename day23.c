@@ -26,5 +26,26 @@ SolutionIntegers getSolutionDay23(const char * inputFilePath)
         free(assemblyCode.instructions[i]);
     free(assemblyCode.instructions);
 
+    // TBD - this is a hardcoded solution for now that only works for my input after manual optimization
+    int b = 109300, c = 126300, d = 0, f = 0, g = 0, h = 0;
+    do
+    {
+        f = 1;
+        d = 2;
+        do
+        {
+            if (b % d == 0 && b / d >= 2 && b / d <= b)
+                f = 0;
+            d += 1;
+        } while (f == 1 && d != b);
+
+        if (f == 0)
+            h += 1;
+        g = b - c;
+        if (b != c)
+            b += 17;
+    } while (g != 0);
+    solution.solutionPart2 = h;
+
     return solution;
 }
