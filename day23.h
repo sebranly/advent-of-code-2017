@@ -1,5 +1,5 @@
-#ifndef DAY18_H_INCLUDED
-#define DAY18_H_INCLUDED
+#ifndef DAY23_H_INCLUDED
+#define DAY23_H_INCLUDED
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,6 +10,6 @@
 // TBD: delete it once main.h is way shorter by exporting definitions for example
 #include "main.h"
 
-SolutionIntegers getSolutionDay18(const char * inputFilePath);
+SolutionIntegers getSolutionDay23(const char * inputFilePath);
 
-#endif // DAY18_H_INCLUDED
+#endif // DAY23_H_INCLUDED

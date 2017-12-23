@@ -749,7 +749,13 @@ int main()
             case 22:
             solutionIntegers = getSolutionDay22(fileName);
             printf("Part 1 - After a total of %d bursts of activity, %d bursts will have caused an infection\n", LIMIT_VALUE_DAY_22_PART_1, solutionIntegers.solutionPart1);
-            printf("Part 2 - %d\n", solutionIntegers.solutionPart2);
+            printf("Part 2 - After a total of %d bursts of activity, %d bursts will have caused an infection\n", LIMIT_VALUE_DAY_22_PART_2, solutionIntegers.solutionPart2);
+            break;
+
+            case 23:
+            solutionIntegers = getSolutionDay23(fileName);
+            printf("Part 1 - The mul instruction is invoked %d times\n", solutionIntegers.solutionPart1);
+            printf("Part 2 - WIP");
             break;
 
             default:

@@ -23,6 +23,7 @@ struct DuetAssemblyCode
     int programId;
     Queue *valuesReceived;
     int programState;
+    int counterMul;
 };
 
 void fillDuetAssemblyCodeInstructions(DuetAssemblyCode assemblyCode, const char * inputFilePath);
@@ -31,10 +32,12 @@ void displayDuetAssemblyCodeInstructions(const DuetAssemblyCode assemblyCode);
 void executeDuetAssemblyCodeInstruction(DuetAssemblyCode * assemblyCode, DuetAssemblyCode * otherAssemblyCode, int part);
 int isSetInstruction(const char * instruction);
 int isAddInstruction(const char * instruction);
+int isSubInstruction(const char * instruction);
 int isMulInstruction(const char * instruction);
 int isModInstruction(const char * instruction);
 int isSndInstruction(const char * instruction);
 int isRcvInstruction(const char * instruction);
 int isJgzInstruction(const char * instruction);
+int isJnzInstruction(const char * instruction);
 
 #endif // DUETASSEMBLYCODE_H_INCLUDED
