@@ -10,3 +10,10 @@ void sortMinMax(int * value1, int * value2)
         *value2 = tmp;
     }
 }
+
+int max(int a, int b)
+{
+    if (a > b)
+        return a;
+    return b;
+}
