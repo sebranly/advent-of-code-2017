@@ -12,6 +12,7 @@ int main()
     SolutionStrings solutionStrings;
     SolutionIntegerString solutionIntegerString;
     SolutionStringInteger solutionStringInteger;
+
     FILE* file = NULL;
     char currentChar = 0, c;
     char fileName[MAX_FILE_NAME_LENGTH];
@@ -762,6 +763,10 @@ int main()
             solutionIntegers = getSolutionDay24(fileName);
             printf("Part 1 - The strength of the strongest bridge we can make is %d\n", solutionIntegers.solutionPart1);
             printf("Part 2 - The strength of the longest bridge we can make is %d\n", solutionIntegers.solutionPart2);
+            break;
+
+            case 25:
+            printf("The diagnostic checksum it produces is %d\n", getSolutionDay25(fileName));
             break;
 
             default:
