@@ -22,7 +22,7 @@ struct BridgeBrick
 };
 
 SolutionIntegers getSolutionDay24(const char * inputFilePath);
-void createBridge(Stack *stack, BridgeBrick *bricks, int numberOfBricks, int * maxStrength);
+void createBridge(Stack *stack, BridgeBrick *bricks, int numberOfBricks, int * maxStrength, int * lengthLongestBridge, int * maxStrengthLongestBridge);
 int calculateBridgeStrength(Stack * stack, BridgeBrick *bricks);
 
 #endif // DAY24_H_INCLUDED

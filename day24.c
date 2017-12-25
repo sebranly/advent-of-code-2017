@@ -6,7 +6,7 @@ SolutionIntegers getSolutionDay24(const char * inputFilePath)
     solution.solutionPart1 = -1;
     solution.solutionPart2 = -1;
 
-    int numberOfBricks = numberOfNonEmptyLines(inputFilePath), currentNumber = 0, currentLine = 0, i, maxStrength = 0;
+    int numberOfBricks = numberOfNonEmptyLines(inputFilePath), currentNumber = 0, currentLine = 0, maxStrength = 0, lengthLongestBridge = 0, maxStrengthLongestBridge = 0;
     int keepReading = 1, readingFlag = 0;
     char currentChar;
     BridgeBrick * bricks;
@@ -52,8 +52,9 @@ SolutionIntegers getSolutionDay24(const char * inputFilePath)
             }
         }
 
-        createBridge(stack, bricks, numberOfBricks, &maxStrength);
+        createBridge(stack, bricks, numberOfBricks, &maxStrength, &lengthLongestBridge, &maxStrengthLongestBridge);
         solution.solutionPart1 = maxStrength;
+        solution.solutionPart2 = maxStrengthLongestBridge;
 
         free(bricks);
         return solution;
@@ -65,9 +66,9 @@ SolutionIntegers getSolutionDay24(const char * inputFilePath)
     }
 }
 
-void createBridge(Stack *stack, BridgeBrick *bricks, int numberOfBricks, int * maxStrength)
+void createBridge(Stack *stack, BridgeBrick *bricks, int numberOfBricks, int * maxStrength, int * lengthLongestBridge, int * maxStrengthLongestBridge)
 {
-    int currentPortNumber, currentTopId = NO_TOP_ID, i, removedId, previousPortNumber, currentStrength;
+    int currentPortNumber, currentTopId = NO_TOP_ID, i, removedId, previousPortNumber, currentStrength, currentLength;
     if (getStackLength(stack) == 0)
         currentPortNumber = 0;
     else
@@ -97,7 +98,7 @@ void createBridge(Stack *stack, BridgeBrick *bricks, int numberOfBricks, int * m
                     bricks[i].port1isAvailable = 0;
                 else
                     bricks[i].port2isAvailable = 0;
-                createBridge(stack, bricks, numberOfBricks, maxStrength);
+                createBridge(stack, bricks, numberOfBricks, maxStrength, lengthLongestBridge, maxStrengthLongestBridge);
             }
         }
     }
@@ -106,8 +107,19 @@ void createBridge(Stack *stack, BridgeBrick *bricks, int numberOfBricks, int * m
         *maxStrength = currentStrength;
     // displayStack(stack);
     // printf("Strength: %d\n", currentStrength);
-    if (getStackLength(stack) > 0)
+    currentLength = getStackLength(stack);
+    if (currentLength > 0)
     {
+        if (currentLength > *lengthLongestBridge)
+        {
+            *lengthLongestBridge = currentLength;
+            *maxStrengthLongestBridge = currentStrength;
+        }
+        else if (currentLength == *lengthLongestBridge)
+        {
+            if (currentStrength > *maxStrengthLongestBridge)
+                *maxStrengthLongestBridge = currentStrength;
+        }
         removedId = pop(stack);
         if (bricks[removedId].port1isAvailable == 1)
         {
