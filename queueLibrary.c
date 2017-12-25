@@ -17,9 +17,7 @@ void addToQueue(Queue *queue, long long newNumber)
         currentElement->next = newElement;
     }
     else
-    {
         queue->first = newElement;
-    }
 }
 
 long long getFromQueue(Queue *queue)

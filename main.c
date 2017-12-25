@@ -758,6 +758,12 @@ int main()
             printf("Part 2 - The value left in h register would be %d\n", solutionIntegers.solutionPart2);
             break;
 
+            case 24:
+            solutionIntegers = getSolutionDay24(fileName);
+            printf("Part 1 - The strength of the strongest bridge we can make is %d\n", solutionIntegers.solutionPart1);
+            printf("Part 2 - WIP\n", solutionIntegers.solutionPart2);
+            break;
+
             default:
             break;
         }

@@ -1,6 +1,7 @@
 #ifndef QUEUELIBRARY_H_INCLUDED
 #define QUEUELIBRARY_H_INCLUDED
 
+#include <stdio.h>
 #include <stdlib.h>
 
 typedef struct QueueElement QueueElement;
@@ -13,7 +14,7 @@ struct QueueElement
 typedef struct Queue Queue;
 struct Queue
 {
-    Queue *first;
+    QueueElement *first;
 };
 
 void addToQueue(Queue *queue, long long newNumber);
