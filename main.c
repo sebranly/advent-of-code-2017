@@ -6,7 +6,7 @@
 #include "other/header/stringLibrary.h"
 #include "other/header/allDays.h"
 
-int main()
+int main(void)
 {
     SolutionIntegers solutionIntegers;
     SolutionStrings solutionStrings;
@@ -14,13 +14,10 @@ int main()
     SolutionStringInteger solutionStringInteger;
 
     FILE* file = NULL;
-    char currentChar = 0, c;
+    char c;
     char fileName[MAX_FILE_NAME_LENGTH];
-    int i = 0, i2 = 0, j = 0, x = 0, y = 0, min = UNSET, max = UNSET, sum = 0, currentNumber = 0, dayOfChallenge = 0, result = 0;
-    // The following variables are used as booleans only
-    int keepReading = 1, incorrectDayOfChallenge = 1, skipLine = 0;
-    int inputIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT];
-    fillAllCellsIn2D(inputIn2D, UNSET);
+    int dayOfChallenge = 0, result = 0;
+    int incorrectDayOfChallenge = 1;
 
     do
     {
@@ -68,85 +65,9 @@ int main()
             break;
 
             case 2:
-            fillAllCellsIn2D(inputIn2D, UNSET);
-            x = 0;
-            y = 0;
-            currentNumber = 0;
-            while (keepReading)
-            {
-                currentChar = fgetc(file);
-                if (isADigit(currentChar))
-                {
-                    currentNumber *= 10;
-                    currentNumber += toInteger(currentChar);
-                }
-                else {
-                    inputIn2D[x][y] = currentNumber;
-                    currentNumber = 0;
-                    if (currentChar == '\t')
-                        x++;
-                    else if (currentChar == '\n')
-                    {
-                        x = 0;
-                        y++;
-                    }
-                    else if (currentChar == EOF)
-                        keepReading = 0;
-                    else
-                    {
-                        printf("An unexpected error occurred while reading the input file with name %s\n", fileName);
-                        return EXIT_FAILURE;
-                    }
-                }
-            }
-
-            sum = 0;
-            i = 0;
-            j = 0;
-            while (inputIn2D[i][j] != UNSET)
-            {
-                while (inputIn2D[i][j] != UNSET)
-                {
-                    if (min == UNSET || inputIn2D[i][j] < min)
-                        min = inputIn2D[i][j];
-                    if (max == UNSET || inputIn2D[i][j] > max)
-                        max = inputIn2D[i][j];
-                    i++;
-                }
-                sum += max - min;
-                min = UNSET;
-                max = UNSET;
-                i = 0;
-                j++;
-            }
-            printf("Part 1 - Checksum for the input is: %d\n", sum);
-
-            sum = 0;
-            i = 0;
-            i2 = 0;
-            j = 0;
-            skipLine = 0;
-            while (inputIn2D[i][j] != UNSET)
-            {
-                while (inputIn2D[i][j] != UNSET && !skipLine)
-                {
-                    i2 = 0;
-                    while (inputIn2D[i2][j] != UNSET && !skipLine)
-                    {
-                       if (i != i2 && inputIn2D[i][j] >= inputIn2D[i2][j] && inputIn2D[i][j] % inputIn2D[i2][j] == 0)
-                       {
-                           sum += inputIn2D[i][j] / inputIn2D[i2][j];
-                           skipLine = 1;
-                       }
-                       i2++;
-                    }
-                    i++;
-                }
-                skipLine = 0;
-                i = 0;
-                j++;
-            }
-            printf("Part 2 - Checksum for the input is: %d\n", sum);
+            solutionIntegers = getSolutionDay02(fileName);
+            printf("Part 1 - Checksum for the input is: %d\n", solutionIntegers.solutionPart1);
+            printf("Part 2 - Checksum for the input is: %d\n", solutionIntegers.solutionPart2);
             break;
 
             case 3:
