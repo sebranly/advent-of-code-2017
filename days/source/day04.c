@@ -102,3 +102,19 @@ void emptyInlineTextInput(char inlineInputAsText[MAX_ELEMENTS_PER_LINE][STRING_M
     for (i = 0 ; i < MAX_ELEMENTS_PER_LINE ; i++)
         inlineInputAsText[i][0] = '\0';
 }
+
+void fillAllCells(int array[], int sizeArray, int value)
+{
+    int i;
+    for (i = 0 ; i < sizeArray ; i++)
+        array[i] = value;
+}
+
+int differentArrays(int array1[], int array2[], int size)
+{
+    int i = 0;
+    for (i = 0 ; i < size ; i++)
+        if (array1[i] != array2[i])
+            return 1;
+    return 0;
+}
