@@ -13,8 +13,6 @@
 #define CHARACTER_NOT_FOUND -1
 #define NO_ENDING_INDEX -1
 
-enum { A_LOWER_CASE_ASCII_CODE = 97, Z_LOWER_CASE_ASCII_CODE = 122 };
-
 int isALowerCaseLetter(char c);
 int isAnUpperCaseLetter(char c);
 void countLetters(const char * string, int array[NUMBER_OF_LOWER_CASE_LETTERS]);

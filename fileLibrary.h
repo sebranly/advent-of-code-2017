@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "main.h"
-#include "duetAssemblyCode.h"
 
 int numberOfNonEmptyLines(const char * inputFilePath);
 void readUniqueLine(const char * inputFilePath, char * inputContent, int stringLength);

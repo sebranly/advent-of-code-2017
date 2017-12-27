@@ -41,7 +41,6 @@ SolutionIntegers getSolutionDay24(const char * inputFilePath)
             else if (currentChar == '\n' || currentChar == EOF)
             {
                 bricks[currentLine].port2 = currentNumber;
-                bricks[currentLine].idBrick = currentLine;
                 bricks[currentLine].port1isAvailable = 1;
                 bricks[currentLine].port2isAvailable = 1;
                 currentNumber = 0;

@@ -16,12 +16,9 @@ SolutionIntegers getSolutionDay18(const char * inputFilePath)
 
     initializeDuetAssemblyCode(&assemblyCode, 0);
     fillDuetAssemblyCodeInstructions(assemblyCode, inputFilePath);
-    printf("There are %d instructions, the first one is <%s> and the last one is <%s>\n", assemblyCode.numberOfInstructions, assemblyCode.instructions[0], assemblyCode.instructions[assemblyCode.numberOfInstructions - 1]);
 
     while (!assemblyCode.recoverOperationExecuted && valueIsBetween(assemblyCode.currentInstructionIndex, 0, assemblyCode.numberOfInstructions - 1))
-    {
         executeDuetAssemblyCodeInstruction(&assemblyCode, NULL, 1);
-    }
 
     if (assemblyCode.recoverOperationExecuted)
         solution.solutionPart1 = assemblyCode.frequencyLastSoundPlayed;
@@ -35,8 +32,8 @@ SolutionIntegers getSolutionDay18(const char * inputFilePath)
     fillDuetAssemblyCodeInstructions(assemblyCode, inputFilePath);
     fillDuetAssemblyCodeInstructions(assemblyCode2, inputFilePath);
 
-    printf("Please wait a bit...\n");
-    while ((valueIsBetween(assemblyCode.currentInstructionIndex, 0, assemblyCode.numberOfInstructions - 1) || valueIsBetween(assemblyCode2.currentInstructionIndex, 0, assemblyCode2.numberOfInstructions - 1)) && !(assemblyCode.programState == LOCKED && assemblyCode2.programState == LOCKED))
+    while ((valueIsBetween(assemblyCode.currentInstructionIndex, 0, assemblyCode.numberOfInstructions - 1) || valueIsBetween(assemblyCode2.currentInstructionIndex, 0, assemblyCode2.numberOfInstructions - 1))
+           && !(assemblyCode.programState == LOCKED && assemblyCode2.programState == LOCKED))
     {
         if (valueIsBetween(assemblyCode.currentInstructionIndex, 0, assemblyCode.numberOfInstructions - 1))
             executeDuetAssemblyCodeInstruction(&assemblyCode, &assemblyCode2, 2);
@@ -45,12 +42,23 @@ SolutionIntegers getSolutionDay18(const char * inputFilePath)
     }
     solution.solutionPart2 = assemblyCode2.counterValuesSent;
 
-    for (i = 0 ; i < assemblyCode.numberOfInstructions ; i++)
-        free(assemblyCode.instructions[i]);
-    free(assemblyCode.instructions);
+    if (assemblyCode.numberOfInstructions != assemblyCode2.numberOfInstructions)
+    {
+        for (i = 0 ; i < assemblyCode.numberOfInstructions ; i++)
+            free(assemblyCode.instructions[i]);
+        for (i = 0 ; i < assemblyCode2.numberOfInstructions ; i++)
+            free(assemblyCode2.instructions[i]);
+    }
+    else
+    {
+        for (i = 0 ; i < assemblyCode.numberOfInstructions ; i++)
+        {
+            free(assemblyCode.instructions[i]);
+            free(assemblyCode2.instructions[i]);
+        }
+    }
 
-    for (i = 0 ; i < assemblyCode2.numberOfInstructions ; i++)
-        free(assemblyCode2.instructions[i]);
+    free(assemblyCode.instructions);
     free(assemblyCode2.instructions);
 
     return solution;

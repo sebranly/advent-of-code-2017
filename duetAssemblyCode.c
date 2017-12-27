@@ -18,7 +18,7 @@ void initializeDuetAssemblyCode(DuetAssemblyCode * assemblyCode, int programId)
         assemblyCode->instructions[i][0] = '\0';
     for (i = 0 ; i < NUMBER_OF_LOWER_CASE_LETTERS ; i++)
         assemblyCode->assemblyRegister[i] = 0;
-    assemblyCode->assemblyRegister['p' - A_LOWER_CASE_ASCII_CODE] = programId;
+    assemblyCode->assemblyRegister['p' - 'a'] = programId;
     assemblyCode->valuesReceived = initializeQueue();
     assemblyCode->programState = NOT_LOCKED;
     assemblyCode->counterMul = 0;
@@ -41,33 +41,33 @@ void executeDuetAssemblyCodeInstruction(DuetAssemblyCode * assemblyCode, DuetAss
 
     if (isSetInstruction(instruction) || isAddInstruction(instruction) || isSubInstruction(instruction) || isMulInstruction(instruction) || isModInstruction(instruction))
     {
-        correctConversion = stringToLongLong(instruction, 6, NO_ENDING_INDEX, &number);
+        correctConversion = stringToLongLong(instruction, INDEX_INSTRUCTION_OPTION_2, NO_ENDING_INDEX, &number);
         // In that case it was a register like 'a' for example
         if (!correctConversion)
-            number = assemblyCode->assemblyRegister[instruction[6] - A_LOWER_CASE_ASCII_CODE];
+            number = assemblyCode->assemblyRegister[instruction[INDEX_INSTRUCTION_OPTION_2] - 'a'];
 
         if (isSetInstruction(instruction))
-            assemblyCode->assemblyRegister[instruction[4] - A_LOWER_CASE_ASCII_CODE] = number;
+            assemblyCode->assemblyRegister[instruction[INDEX_INSTRUCTION_OPTION_1] - 'a'] = number;
         else if (isAddInstruction(instruction))
-            assemblyCode->assemblyRegister[instruction[4] - A_LOWER_CASE_ASCII_CODE] += number;
+            assemblyCode->assemblyRegister[instruction[INDEX_INSTRUCTION_OPTION_1] - 'a'] += number;
         else if (isSubInstruction(instruction))
-            assemblyCode->assemblyRegister[instruction[4] - A_LOWER_CASE_ASCII_CODE] -= number;
+            assemblyCode->assemblyRegister[instruction[INDEX_INSTRUCTION_OPTION_1] - 'a'] -= number;
         else if (isMulInstruction(instruction))
         {
-            assemblyCode->assemblyRegister[instruction[4] - A_LOWER_CASE_ASCII_CODE] *= number;
+            assemblyCode->assemblyRegister[instruction[INDEX_INSTRUCTION_OPTION_1] - 'a'] *= number;
             assemblyCode->counterMul++;
         }
         else if (isModInstruction(instruction))
-            assemblyCode->assemblyRegister[instruction[4] - A_LOWER_CASE_ASCII_CODE] %= number;
+            assemblyCode->assemblyRegister[instruction[INDEX_INSTRUCTION_OPTION_1] - 'a'] %= number;
 
         (assemblyCode->currentInstructionIndex)++;
     }
     else if (isSndInstruction(instruction))
     {
-        correctConversion = stringToLongLong(instruction, 4, NO_ENDING_INDEX, &number);
+        correctConversion = stringToLongLong(instruction, INDEX_INSTRUCTION_OPTION_1, NO_ENDING_INDEX, &number);
         // In that case it was a register like 'a' for example
         if (!correctConversion)
-            number = assemblyCode->assemblyRegister[instruction[4] - A_LOWER_CASE_ASCII_CODE];
+            number = assemblyCode->assemblyRegister[instruction[INDEX_INSTRUCTION_OPTION_1] - 'a'];
         assemblyCode->atLeastOneSoundPlayed = 1;
         assemblyCode->frequencyLastSoundPlayed = number;
 
@@ -83,7 +83,7 @@ void executeDuetAssemblyCodeInstruction(DuetAssemblyCode * assemblyCode, DuetAss
     {
         if (part == 1)
         {
-            if (assemblyCode->assemblyRegister[instruction[4] - A_LOWER_CASE_ASCII_CODE] != 0)
+            if (assemblyCode->assemblyRegister[instruction[INDEX_INSTRUCTION_OPTION_1] - 'a'] != 0)
                 assemblyCode->recoverOperationExecuted = 1;
             (assemblyCode->currentInstructionIndex)++;
         }
@@ -94,7 +94,7 @@ void executeDuetAssemblyCodeInstruction(DuetAssemblyCode * assemblyCode, DuetAss
             else
             {
                 assemblyCode->programState = NOT_LOCKED;
-                assemblyCode->assemblyRegister[instruction[4] - A_LOWER_CASE_ASCII_CODE] = getFromQueue(assemblyCode->valuesReceived);
+                assemblyCode->assemblyRegister[instruction[INDEX_INSTRUCTION_OPTION_1] - 'a'] = getFromQueue(assemblyCode->valuesReceived);
                 (assemblyCode->currentInstructionIndex)++;
             }
         }
@@ -102,16 +102,16 @@ void executeDuetAssemblyCodeInstruction(DuetAssemblyCode * assemblyCode, DuetAss
     else if (isJgzInstruction(instruction) || isJnzInstruction(instruction))
     {
         indexSecondSpace = findSecondOccurrence(instruction, ' ');
-        correctConversion = stringToLongLong(instruction, 4, indexSecondSpace - 1, &number);
+        correctConversion = stringToLongLong(instruction, INDEX_INSTRUCTION_OPTION_1, indexSecondSpace - 1, &number);
         // In that case it was a register like 'a' for example
         if (!correctConversion)
-            number = assemblyCode->assemblyRegister[instruction[4] - A_LOWER_CASE_ASCII_CODE];
+            number = assemblyCode->assemblyRegister[instruction[INDEX_INSTRUCTION_OPTION_1] - 'a'];
         if ((isJgzInstruction(instruction) && number > 0) || (isJnzInstruction(instruction) && number != 0))
         {
             correctConversion = stringToLongLong(instruction, indexSecondSpace + 1, NO_ENDING_INDEX, &number);
             // In that case it was a register like 'a' for example
             if (!correctConversion)
-                number = assemblyCode->assemblyRegister[instruction[indexSecondSpace + 1] - A_LOWER_CASE_ASCII_CODE];
+                number = assemblyCode->assemblyRegister[instruction[indexSecondSpace + 1] - 'a'];
 
             (assemblyCode->currentInstructionIndex) += number;
         }

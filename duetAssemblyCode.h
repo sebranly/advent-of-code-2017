@@ -7,6 +7,9 @@
 #include "fileLibrary.h"
 #include "queueLibrary.h"
 
+#define INDEX_INSTRUCTION_OPTION_1 4
+#define INDEX_INSTRUCTION_OPTION_2 6
+
 enum { LOCKED, NOT_LOCKED };
 
 typedef struct DuetAssemblyCode DuetAssemblyCode;

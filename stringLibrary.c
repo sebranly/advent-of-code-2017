@@ -2,7 +2,7 @@
 
 int isALowerCaseLetter(char c)
 {
-    return (c >= A_LOWER_CASE_ASCII_CODE && c <= Z_LOWER_CASE_ASCII_CODE);
+    return (c >= 'a' && c <= 'z');
 }
 
 int isAnUpperCaseLetter(char c)
@@ -16,7 +16,7 @@ void countLetters(const char * string, int array[NUMBER_OF_LOWER_CASE_LETTERS])
     fillAllCells(array, NUMBER_OF_LOWER_CASE_LETTERS, 0);
     while (string[i] != '\0')
     {
-        array[string[i] - A_LOWER_CASE_ASCII_CODE]++;
+        array[string[i] - 'a']++;
         i++;
     }
 }
@@ -32,7 +32,7 @@ void initializeAlphabeticalSequence(char * string, int numberOfLetters)
     if (numberOfLetters <= NUMBER_OF_LOWER_CASE_LETTERS)
     {
         for (i = 0 ; i < numberOfLetters ; i++)
-            string[i] = i + A_LOWER_CASE_ASCII_CODE;
+            string[i] = i + 'a';
         string[i] = '\0';
     }
 }
@@ -108,7 +108,7 @@ int stringToLongLong(const char * string, int startingIndex, int endingIndex, lo
 {
     int index = startingIndex;
     long long currentNumber = 0;
-    int sign = 1, atLeastOneDigit =0;
+    int sign = 1, atLeastOneDigit = 0;
     while ((endingIndex == NO_ENDING_INDEX && string[index] != '\0') || (endingIndex != NO_ENDING_INDEX && index <= endingIndex))
     {
         if (string[index] == '-')

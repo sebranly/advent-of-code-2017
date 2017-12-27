@@ -72,6 +72,9 @@ int getSolutionDay25(const char * inputFilePath)
         for (i = 0 ; i < valuesArraySize ; i++)
             solution += values[i];
 
+        free(stateRules);
+        free(values);
+
         fclose(file);
         return solution;
     }

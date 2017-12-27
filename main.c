@@ -725,8 +725,8 @@ int main()
 
             case 18:
             solutionIntegers = getSolutionDay18(fileName);
-            printf("Part 1 - %d\n", solutionIntegers.solutionPart1);
-            printf("Part 2 - %d\n", solutionIntegers.solutionPart2);
+            printf("Part 1 - The first time a rcv instruction is executed with a non-zero value, the value of the recovered frequency is %d\n", solutionIntegers.solutionPart1);
+            printf("Part 2 - Once both programs have terminated, program 1 sent a value %d times\n", solutionIntegers.solutionPart2);
             break;
 
             case 19:

@@ -3,10 +3,13 @@
 SolutionIntegers getSolutionDay21(const char * inputFilePath)
 {
     SolutionIntegers solution;
+    solution.solutionPart1 = NO_SOLUTION_FOUND;
+    solution.solutionPart2 = NO_SOLUTION_FOUND;
+
     int keepReading = 1, beforeOutput = 1;
     int currentLine = 0;
     int x, y, i, j, combinationIndex, numberOfPatternRelations = numberOfNonEmptyLines(inputFilePath);
-    int size = 3, iteration, numberOfCells;
+    int size, iteration, numberOfCells;
     char currentChar;
     int occurrencesOfCombinations[NUMBER_OF_2_PER_2_INPUT_COMBINATIONS] = {0};
     PatternRelation * patternRelations;
@@ -21,24 +24,19 @@ SolutionIntegers getSolutionDay21(const char * inputFilePath)
     if (file != NULL)
     {
         // We determine the max size of the pattern array we need for the whole day challenge
-        // Note: this is a workaround for part 2 as the part 2 needs a lot of iterations hence too many resources for the grid
+        // Note: this is a workaround for part 2 as part 2 needs a lot of iterations hence too many resources for the grid
         size = 2;
-        iteration = 0;
-        while (iteration < (LIMIT_VALUE_DAY_21_PART_2 - LIMIT_VALUE_DAY_21_PART_1))
-        {
-            if (size % 2 == 0)
-                size = 3 * (size / 2);
-            else if (size % 3 == 0)
-                size = 4 * (size / 3);
-            iteration++;
-        }
+        for (iteration = 0 ; iteration < (LIMIT_VALUE_DAY_21_PART_2 - LIMIT_VALUE_DAY_21_PART_1) ; iteration++)
+            size = (size % 2 == 0) ? 3 * (size / 2) : 4 * (size / 3);
+
         maxPatternSize = size;
         pattern = malloc(sizeof(*pattern) * maxPatternSize);
-        for (i = 0 ; i < maxPatternSize ; i++)
-            pattern[i] = malloc(sizeof(**pattern) * maxPatternSize);
         patternCopy = malloc(sizeof(*patternCopy) * maxPatternSize);
         for (i = 0 ; i < maxPatternSize ; i++)
+        {
+            pattern[i] = malloc(sizeof(**pattern) * maxPatternSize);
             patternCopy[i] = malloc(sizeof(**patternCopy) * maxPatternSize);
+        }
 
         patternRelations = malloc(sizeof(*patternRelations) * numberOfPatternRelations);
         if (patternRelations == NULL)
@@ -96,34 +94,41 @@ SolutionIntegers getSolutionDay21(const char * inputFilePath)
                 if (pattern[i][j] == CELL)
                     (solution.solutionPart1)++;
 
-        // We take a look at the shape of the final grid by dividing it into a lot of elementary 2x2 grids
-        for (i = 0 ; i < size ; i += 2)
-            for (j = 0 ; j < size ; j += 2)
-                occurrencesOfCombinations[get2Per2Combination(pattern, i, j)]++;
-
-        solution.solutionPart2 = 0;
-        // We make each type of 2x2 grid evolve from part 1's iteration to part 2's iteration
-        for (combinationIndex = 0 ; combinationIndex < NUMBER_OF_2_PER_2_INPUT_COMBINATIONS ; combinationIndex++)
+        if (size % 2 == 0)
         {
-            if (occurrencesOfCombinations[combinationIndex] > 0)
+            // We take a look at the shape of the final grid by dividing it into a lot of elementary 2x2 grids
+            for (i = 0 ; i < size ; i += 2)
+                for (j = 0 ; j < size ; j += 2)
+                    occurrencesOfCombinations[get2Per2Combination(pattern, i, j)]++;
+
+            solution.solutionPart2 = 0;
+            // We make each type of 2x2 grid evolve from part 1's iteration to part 2's iteration
+            for (combinationIndex = 0 ; combinationIndex < NUMBER_OF_2_PER_2_INPUT_COMBINATIONS ; combinationIndex++)
             {
-                size = initialize2Per2Pattern(pattern, combinationIndex);
-                size = evolvePatternOverGenerations(pattern, patternCopy, size, patternRelations, numberOfPatternRelations, LIMIT_VALUE_DAY_21_PART_2 - LIMIT_VALUE_DAY_21_PART_1);
-                numberOfCells = 0;
-                for (i = 0 ; i < size ; i++)
-                    for (j = 0 ; j < size ; j++)
-                        if (pattern[i][j] == CELL)
-                            numberOfCells++;
-                solution.solutionPart2 += occurrencesOfCombinations[combinationIndex] * numberOfCells;
+                if (occurrencesOfCombinations[combinationIndex] > 0)
+                {
+                    size = initialize2Per2Pattern(pattern, combinationIndex);
+                    size = evolvePatternOverGenerations(pattern, patternCopy, size, patternRelations, numberOfPatternRelations, LIMIT_VALUE_DAY_21_PART_2 - LIMIT_VALUE_DAY_21_PART_1);
+                    numberOfCells = 0;
+                    for (i = 0 ; i < size ; i++)
+                        for (j = 0 ; j < size ; j++)
+                            if (pattern[i][j] == CELL)
+                                numberOfCells++;
+                    solution.solutionPart2 += occurrencesOfCombinations[combinationIndex] * numberOfCells;
+                }
             }
+        }
+        else
+        {
+            printf("The workaround coded for part 2 does not work for your test case because after part 1 the size is not even\n");
         }
 
         for (i = 0 ; i < maxPatternSize ; i++)
+        {
             free(pattern[i]);
-        free(pattern);
-
-        for (i = 0 ; i < maxPatternSize ; i++)
             free(patternCopy[i]);
+        }
+        free(pattern);
         free(patternCopy);
 
         free(patternRelations);
@@ -195,6 +200,7 @@ int initialize2Per2Pattern(char ** pattern, int combinationOf2Per2)
             break;
 
         case FOUR_CELLS:
+        default:
             for (i = 0 ; i < 2 ; i++)
                 for (j = 0 ; j < 2 ; j++)
                     pattern[i][j] = CELL;
@@ -216,34 +222,29 @@ int get2Per2Combination(char **pattern, int startingX, int startingY)
     {
         case 0:
             return ZERO_CELLS;
-            break;
         case 1:
             return ONE_CELL;
-            break;
         case 2:
             if ((pattern[startingX][startingY] == CELL && pattern[startingX + 1][startingY + 1] == CELL)
                 || (pattern[startingX + 1][startingY] == CELL && pattern[startingX][startingY + 1] == CELL))
                 return TWO_DIAGONAL_CELLS;
             return TWO_ADJACENT_CELLS;
-            break;
         case 3:
             return THREE_CELLS;
-            break;
         case 4:
         default:
             return FOUR_CELLS;
-            break;
     }
 }
 
 int evolvePatternOverGenerations(char **pattern, char **patternCopy, int sizePatternInput, PatternRelation * patternRelations, int numberOfPatternRelations, int numberOfGenerations)
 {
     int iterationDone;
-    int numberOfBlocks = 0, numberOfBlocksX = 0, numberOfBlocksY = 0, iteration = 0, sizePatternOutput, divisor = 0, i, j;
+    int numberOfBlocks = 0, numberOfBlocksX = 0, numberOfBlocksY = 0, iteration, sizePatternOutput, divisor = 0, i, j;
     char patternInput[MAX_INPUT_PATTERN_SIZE][MAX_INPUT_PATTERN_SIZE];
     char patternOutput[MAX_OUTPUT_PATTERN_SIZE][MAX_OUTPUT_PATTERN_SIZE];
 
-    while (iteration < numberOfGenerations)
+    for (iteration = 0 ; iteration < numberOfGenerations ; iteration++)
     {
         iterationDone = 0;
         for (divisor = 2 ; divisor <= 3 && !iterationDone ; divisor++)
@@ -276,18 +277,16 @@ int evolvePatternOverGenerations(char **pattern, char **patternCopy, int sizePat
                 iterationDone = 1;
             }
         }
-
-        iteration++;
     }
     return sizePatternInput;
 }
 
 void determineOutputPatternBasedOnInputPattern(char inputPattern[MAX_INPUT_PATTERN_SIZE][MAX_INPUT_PATTERN_SIZE], char outputPattern[MAX_OUTPUT_PATTERN_SIZE][MAX_OUTPUT_PATTERN_SIZE], PatternRelation * patternRelations, int numberOfPatternRelations, int inputPatternSize)
 {
-    int i = 0;
-    while (i < numberOfPatternRelations)
+    int i;
+    for (i = 0 ; i < numberOfPatternRelations ; i++)
     {
-        // We skip this pattern relation if it's 3x3 but the element in the center is not the same for both matrices
+        // We skip this pattern relation check if it's 3x3 and the element in the center is not the same for both matrices
         // Indeed the transformations do not affect the central element so it's a good indicator of if we should go further
         if ((patternRelations[i].sizeInput == inputPatternSize) && (inputPatternSize == 2 || (inputPatternSize == 3 && patternRelations[i].inputPattern[1][1] == inputPattern[1][1])))
         {
@@ -320,7 +319,6 @@ void determineOutputPatternBasedOnInputPattern(char inputPattern[MAX_INPUT_PATTE
                 break;
             flipArray2D(patternRelations[i].inputPattern, inputPatternSize);
         }
-        i++;
     }
     copyOutputArray2D(outputPattern, patternRelations[i].outputPattern,  patternRelations[i].sizeOutput);
 }
@@ -351,7 +349,7 @@ void rotate90DegreesArray2D(char a[MAX_INPUT_PATTERN_SIZE][MAX_INPUT_PATTERN_SIZ
     char b[MAX_INPUT_PATTERN_SIZE][MAX_INPUT_PATTERN_SIZE];
     for (i = 0 ; i < size ; i++)
         for (j = 0 ; j < size ; j++)
-            b[i][j] = a[size - j - 1][i];
+            b[i][j] = a[size - 1 - j][i];
     copyInputArray2D(a, b, size);
 }
 

@@ -14,7 +14,6 @@
 typedef struct BridgeBrick BridgeBrick;
 struct BridgeBrick
 {
-    int idBrick;
     unsigned int port1;
     unsigned int port2;
     int port1isAvailable;

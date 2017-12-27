@@ -119,9 +119,7 @@ void fillLinesIn2DArray(char **array, const int numberOfArrayLines, const char *
                 currentCharIndex++;
             }
             else
-            {
                 array[lineIndex][currentCharIndex] = '\0';
-            }
         } while(lineIndex < numberOfArrayLines && currentChar != EOF);
         fclose(file);
     }

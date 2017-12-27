@@ -6,7 +6,7 @@ SolutionIntegers getSolutionDay22(const char * inputFilePath)
     int sizeInput = lengthFirstLine(inputFilePath);
     int maxLimit = max(LIMIT_VALUE_DAY_22_PART_1, LIMIT_VALUE_DAY_22_PART_2);
     // The input grid is a square that corresponds to the center of the "infinite" grid
-    // To represent the latter for a simulation, a grid of (number of iterations + 1 (central element)) elements is enough
+    // To represent the latter for a simulation, based on the rules, a grid of (number of iterations + 1 (central element)) elements is enough
     // We calculate the offset of the input grid by taking this simulation grid as the reference
     int offsetInput = maxLimit / 2 + 1 - sizeInput / 2;
     PositiveCoordinates2D currentPosition;
@@ -37,10 +37,9 @@ SolutionIntegers getSolutionDay22(const char * inputFilePath)
         }
         for (partNumber = 1 ; partNumber <= 2 ; partNumber++)
         {
-            printf("Calculating part %d, please wait...\n", partNumber);
-            // We start at the middle of the grid
+            // We start at the center of the grid
             currentPosition.x = maxLimit / 2 + 1;
-            currentPosition.y = maxLimit / 2 + 1;
+            currentPosition.y = currentPosition.x;
             x = offsetInput;
             y = offsetInput;
             numberOfIterationsCausingInfection = 0;
@@ -76,8 +75,6 @@ SolutionIntegers getSolutionDay22(const char * inputFilePath)
             numberOfIterations = partNumber == 1 ? LIMIT_VALUE_DAY_22_PART_1 : LIMIT_VALUE_DAY_22_PART_2;
             for (iteration = 0 ; iteration < numberOfIterations ; iteration++)
             {
-                if (iteration % (numberOfIterations / 100) == 0)
-                    printf("%d per cent completed\n", iteration / (numberOfIterations / 100));
                 // We try and find the element
                 currentPositionIndexInNode = NOT_REFERENCED_NODE;
                 for (i = 0 ; i < numberOfReferencedNodes && currentPositionIndexInNode == NOT_REFERENCED_NODE ; i++)
