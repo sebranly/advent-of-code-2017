@@ -16,13 +16,10 @@ int main()
     FILE* file = NULL;
     char currentChar = 0, c;
     char fileName[MAX_FILE_NAME_LENGTH];
-    char inlineInputAsText[MAX_ELEMENTS_PER_LINE][STRING_MAX_LENGTH];
-    int i = 0, i2 = 0, j = 0, x = 0, y = 0, currentIndex = 0, currentCharIndex = 0, uniqueInputNumber = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, sum = 0, sum2 = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, dayOfChallenge = 0, result = 0;
+    int i = 0, i2 = 0, j = 0, x = 0, y = 0, uniqueInputNumber = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, sum = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, dayOfChallenge = 0, result = 0;
     int beforeResetForDirection = UNSET, currentDirection = UNSET;
     // The following variables are used as booleans only
     int keepReading = 1, outOfArrayRange = 0, incorrectDayOfChallenge = 1, skipLine = 0;
-    int counterOfLetters1[NUMBER_OF_LOWER_CASE_LETTERS] = {0};
-    int counterOfLetters2[NUMBER_OF_LOWER_CASE_LETTERS] = {0};
     int corners[NUMBER_OF_CARDINAL_DIRECTIONS];
     for (i = 0 ; i < NUMBER_OF_CARDINAL_DIRECTIONS ; i++)
         corners[i] = UNSET;
@@ -295,83 +292,9 @@ int main()
             break;
 
             case 4:
-            sum = 0;
-            sum2 = 0;
-            keepReading = 1;
-            currentIndex = 0;
-            currentCharIndex = 0;
-            emptyInlineTextInput(inlineInputAsText);
-            while (keepReading)
-            {
-                currentChar = fgetc(file);
-                if (isALowerCaseLetter(currentChar))
-                {
-                    inlineInputAsText[currentIndex][currentCharIndex] = currentChar;
-                    currentCharIndex++;
-                }
-                else if (currentChar == ' ' || currentChar == '\n' || currentChar == EOF)
-                {
-                    inlineInputAsText[currentIndex][currentCharIndex] = '\0';
-                    currentCharIndex = 0;
-                    if (currentChar == ' ')
-                        currentIndex++;
-                    else
-                    {
-                        skipLine = 0;
-                        i = 0;
-                        while (i <= currentIndex && !skipLine)
-                        {
-                            j = 0;
-                            while (j <= currentIndex && !skipLine)
-                            {
-                                if (i != j && sameStrings(inlineInputAsText[i], inlineInputAsText[j]))
-                                    skipLine = 1;
-                                j++;
-                            }
-                            i++;
-                        }
-                        if (!skipLine)
-                        {
-                            sum += 1;
-                            // The rule for part 2 (based on anagrams) is more strict than the rule for part 1 (based on string comparison)
-                            skipLine = 0;
-                            i = 0;
-                            while (i <= currentIndex && !skipLine)
-                            {
-                                countLetters(inlineInputAsText[i], counterOfLetters1);
-                                j = 0;
-                                while (j <= currentIndex && !skipLine)
-                                {
-                                    if (i != j)
-                                    {
-                                        countLetters(inlineInputAsText[j], counterOfLetters2);
-                                        if (!differentArrays(counterOfLetters1, counterOfLetters2, NUMBER_OF_LOWER_CASE_LETTERS))
-                                            skipLine = 1;
-                                    }
-                                    j++;
-                                }
-                                i++;
-                            }
-                            if (!skipLine)
-                                sum2 += 1;
-                        }
-
-                        currentIndex = 0;
-                        emptyInlineTextInput(inlineInputAsText);
-
-                        if (currentChar == EOF)
-                            keepReading = 0;
-                    }
-
-                }
-                else
-                {
-                    printf("An unexpected error occurred while reading the input file with name %s\n", fileName);
-                    return EXIT_FAILURE;
-                }
-            }
-            printf("Part 1 - there is/are %d valid passphrase(s) in the input file\n", sum);
-            printf("Part 2 - there is/are %d valid passphrase(s) in the input file\n", sum2);
+            solutionIntegers = getSolutionDay04(fileName);
+            printf("Part 1 - there is/are %d valid passphrase(s) in the input file\n", solutionIntegers.solutionPart1);
+            printf("Part 2 - there is/are %d valid passphrase(s) in the input file\n", solutionIntegers.solutionPart2);
             break;
 
             case 5:
@@ -584,13 +507,6 @@ int differentArrays(int array1[], int array2[], int size)
         if (array1[i] != array2[i])
             return 1;
     return 0;
-}
-
-void emptyInlineTextInput(char inlineInputAsText[MAX_ELEMENTS_PER_LINE][STRING_MAX_LENGTH])
-{
-    int i;
-    for (i = 0 ; i < MAX_ELEMENTS_PER_LINE ; i++)
-        inlineInputAsText[i][0] = '\0';
 }
 
 int sumOfAdjacentCells(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int x, int y)

@@ -2,6 +2,7 @@
 #define ALLDAYS_H_INCLUDED
 
 #include "../../days/header/day01.h"
+#include "../../days/header/day04.h"
 #include "../../days/header/day05.h"
 #include "../../days/header/day06.h"
 #include "../../days/header/day07.h"
