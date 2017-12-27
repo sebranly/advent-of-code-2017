@@ -4,6 +4,7 @@ More info on: http://adventofcode.com/2017
 
 ## Structure of the codebase
 
+```
 /
 	main.c
 	main.h
@@ -21,3 +22,4 @@ More info on: http://adventofcode.com/2017
 			<a useful library>.h
 
 XY is ranging from 01 to 25 as there were 25 challenges
+```
