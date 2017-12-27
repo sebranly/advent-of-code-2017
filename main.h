@@ -6,9 +6,7 @@ enum { NORTH_WEST, NORTH_EAST, SOUTH_WEST, SOUTH_EAST };
 enum { NORTH, SOUTH, WEST, EAST };
 
 #define MAX_TREE_ELEMENTS 1200
-#define MAX_REGISTERS 1200
 #define TREE_ELEMENT_NAME_MAX_LENGTH 20
-#define REGISTER_NAME_MAX_LENGTH 10
 
 #define LATEST_AVAILABLE_CHALLENGE 25
 #define MAX_CHALLENGE 25
@@ -40,13 +38,6 @@ struct TreeElement
     int valueOfAncestorAndChildren;
 };
 
-typedef struct Register Register;
-struct Register
-{
-    char name[REGISTER_NAME_MAX_LENGTH];
-    int value;
-};
-
 int isADigit(char c);
 int toInteger(char digit);
 int nextSpiralDirection(int currentDirection);
@@ -65,8 +56,6 @@ void removeTreeAncestors(TreeElement elements[], int size);
 TreeElement firstElementWithoutAncestor(TreeElement elements[], int size);
 void displayChildren(TreeElement elements[], int size, const TreeElement ancestor, int depth);
 int setValueOfAncestorAndChildren(TreeElement elements[], int size, TreeElement * ancestor);
-int createNewRegister(Register * registers, int size, const char * name);
-int findRegister(const Register * registers, int size, const char * name);
 void swapValues(int * value1, int * value2);
 
 #endif // MAIN_H_INCLUDED

@@ -18,9 +18,7 @@ int main()
     char fileName[MAX_FILE_NAME_LENGTH];
     char inlineInputAsText[MAX_ELEMENTS_PER_LINE][STRING_MAX_LENGTH];
     char ancestorName[TREE_ELEMENT_NAME_MAX_LENGTH], elementName[TREE_ELEMENT_NAME_MAX_LENGTH];
-    char registerName[REGISTER_NAME_MAX_LENGTH], conditionalRegisterName[REGISTER_NAME_MAX_LENGTH];
-    char operationString[STRING_LIMITED_LENGTH], conditionalString[STRING_LIMITED_LENGTH], operatorString[STRING_LIMITED_LENGTH];
-    int i = 0, i2 = 0, j = 0, x = 0, y = 0, part = 1, size = 0, sign = 1, currentIndex = 0, currentCharIndex = 0, uniqueInputNumber = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, max2 = UNSET, sum = 0, sum2 = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, currentConditionalNumber, dayOfChallenge = 0, result = 0;
+    int i = 0, i2 = 0, j = 0, x = 0, y = 0, part = 1, size = 0, sign = 1, currentIndex = 0, currentCharIndex = 0, uniqueInputNumber = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, sum = 0, sum2 = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, dayOfChallenge = 0, result = 0;
     int beforeResetForDirection = UNSET, currentDirection = UNSET;
     // The following variables are used as booleans only
     int keepReading = 1, outOfArrayRange = 0, incorrectDayOfChallenge = 1, skipLine = 0, solutionIsFound = 0, stillOnAncestorName = 1;
@@ -32,8 +30,6 @@ int main()
     for (i = 0 ; i < NUMBER_OF_CARDINAL_DIRECTIONS ; i++)
         corners[i] = UNSET;
     TreeElement treeElements[MAX_TREE_ELEMENTS], ancestor;
-    Register registers[MAX_REGISTERS];
-    int indexAffectedRegister, indexConditionalRegister;
     int records[ARBITRARY_NUMBER_OF_RECORDS][ARBITRARY_NUMBER_OF_ELEMENTS_PER_RECORD];
     int inputIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT];
     fillAllCellsIn2D(inputIn2D, UNSET);
@@ -622,51 +618,9 @@ int main()
             break;
 
             case 8:
-            keepReading = 1;
-            size = 0;
-            max2 = 0;
-            while (keepReading)
-            {
-                fscanf(file, "%s %s %d %s %s %s %d", registerName, operationString, &currentNumber, conditionalString, conditionalRegisterName, operatorString, &currentConditionalNumber);
-
-                indexAffectedRegister = findRegister(registers, size, registerName);
-                if (indexAffectedRegister == NOT_FOUND)
-                {
-                    indexAffectedRegister = size;
-                    size = createNewRegister(registers, size, registerName);
-                }
-
-                indexConditionalRegister = findRegister(registers, size, conditionalRegisterName);
-                if (indexConditionalRegister == NOT_FOUND)
-                {
-                    indexConditionalRegister = size;
-                    size = createNewRegister(registers, size, conditionalRegisterName);
-                }
-
-                if (
-                    (sameStrings(operatorString, ">") && registers[indexConditionalRegister].value > currentConditionalNumber) ||
-                    (sameStrings(operatorString, "<") && registers[indexConditionalRegister].value < currentConditionalNumber) ||
-                    (sameStrings(operatorString, ">=") && registers[indexConditionalRegister].value >= currentConditionalNumber) ||
-                    (sameStrings(operatorString, "<=") && registers[indexConditionalRegister].value <= currentConditionalNumber) ||
-                    (sameStrings(operatorString, "!=") && registers[indexConditionalRegister].value != currentConditionalNumber) ||
-                    (sameStrings(operatorString, "==") && registers[indexConditionalRegister].value == currentConditionalNumber)
-                )
-                {
-                    sign = sameStrings(operationString, "inc") ? 1 : -1;
-                    registers[indexAffectedRegister].value += sign * currentNumber;
-                    if (registers[indexAffectedRegister].value > max2)
-                        max2 = registers[indexAffectedRegister].value;
-                }
-
-                if (fgetc(file) == EOF)
-                    keepReading = 0;
-            }
-
-            for (i = 0 ; i < size ; i++)
-                if (i == 0 || registers[i].value > max)
-                    max = registers[i].value;
-            printf("Part 1 - the largest value is any register is %d\n", max);
-            printf("Part 2 - the highest value held in any register during the process was %d\n", max2);
+            solutionIntegers = getSolutionDay08(fileName);
+            printf("Part 1 - the largest value is any register is %d\n", solutionIntegers.solutionPart1);
+            printf("Part 2 - the highest value held in any register during the process was %d\n", solutionIntegers.solutionPart2);
             break;
 
             case 9:
@@ -973,24 +927,6 @@ int setValueOfAncestorAndChildren(TreeElement elements[], int size, TreeElement 
         if (sameStrings(elements[i].uniqueAncestorName, pAncestor->name))
             pAncestor->valueOfAncestorAndChildren += setValueOfAncestorAndChildren(elements, size, &(elements[i]));
     return pAncestor->valueOfAncestorAndChildren;
-}
-
-int findRegister(const Register * registers, int size, const char * name)
-{
-    int i = 0;
-    for (i = 0 ; i < size ; i++)
-        if (sameStrings(registers[i].name, name))
-            return i;
-    return NOT_FOUND;
-}
-
-int createNewRegister(Register * registers, int size, const char * name)
-{
-    Register newRegister;
-    newRegister.value = 0;
-    strcpy(newRegister.name, name);
-    registers[size] = newRegister;
-    return size + 1;
 }
 
 void swapValues(int * value1, int * value2)
