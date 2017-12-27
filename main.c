@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "main.h"
-#include "solutionTypes.h"
-#include "stringLibrary.h"
-#include "allDays.h"
+#include "other/header/solutionTypes.h"
+#include "other/header/stringLibrary.h"
+#include "other/header/allDays.h"
 
 int main()
 {
@@ -65,7 +65,7 @@ int main()
 
     printf("\nCHALLENGE OF DAY %02d\n===================\n", dayOfChallenge);
 
-    result = sprintf(fileName, "inputs/inputDay%02d.txt", dayOfChallenge);
+    result = sprintf(fileName, "days/input/day%02d.txt", dayOfChallenge);
     if (result < 0)
     {
         printf("An unexpected error occurred before reading the input file");
