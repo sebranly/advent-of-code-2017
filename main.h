@@ -13,9 +13,6 @@ enum { NORTH, SOUTH, WEST, EAST };
 #define NOT_FOUND -1
 
 #define ARBITRARY_ARRAY_LIMIT 3000
-// TBD - Note: day challenge 6 part 1 deserves an optimization because this is only a workaround so far (problem is memory limitation)
-#define ARBITRARY_NUMBER_OF_RECORDS 15000
-#define ARBITRARY_NUMBER_OF_ELEMENTS_PER_RECORD 30
 // The following value is a limit per dimension
 #define ARBITRARY_2D_ARRAY_LIMIT 100
 #define MAX_FILE_NAME_LENGTH 50
@@ -31,7 +28,6 @@ int nextSpiralDirection(int currentDirection);
 int valueIsBetween(int value, int min, int max);
 void moveOneStep(int * x, int * y, int currentDirection);
 void fillAllCells(int array[], int sizeArray, int value);
-int minIndexOfMaxValue(int array[], int size);
 int differentArrays(int array1[], int array2[], int size);
 void copyFirstCells(int sourceArray[], int destinationArray[], int numberOfCellsToBeCopied);
 void fillAllCellsIn2D(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int value);

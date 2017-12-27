@@ -20,7 +20,7 @@ int main()
     int i = 0, i2 = 0, j = 0, x = 0, y = 0, part = 1, size = 0, sign = 1, currentIndex = 0, currentCharIndex = 0, uniqueInputNumber = 0, number = 0, pivotNumber = 0, min = UNSET, max = UNSET, sum = 0, sum2 = 0, numberOfRing = 0, heightPerRing = UNSET, numberOfSteps = UNSET, currentNumber = 0, dayOfChallenge = 0, result = 0;
     int beforeResetForDirection = UNSET, currentDirection = UNSET;
     // The following variables are used as booleans only
-    int keepReading = 1, outOfArrayRange = 0, incorrectDayOfChallenge = 1, skipLine = 0, solutionIsFound = 0;
+    int keepReading = 1, outOfArrayRange = 0, incorrectDayOfChallenge = 1, skipLine = 0;
     int counterOfLetters1[NUMBER_OF_LOWER_CASE_LETTERS] = {0};
     int counterOfLetters2[NUMBER_OF_LOWER_CASE_LETTERS] = {0};
     int input[ARBITRARY_ARRAY_LIMIT] = {0};
@@ -28,7 +28,6 @@ int main()
     int corners[NUMBER_OF_CARDINAL_DIRECTIONS];
     for (i = 0 ; i < NUMBER_OF_CARDINAL_DIRECTIONS ; i++)
         corners[i] = UNSET;
-    int records[ARBITRARY_NUMBER_OF_RECORDS][ARBITRARY_NUMBER_OF_ELEMENTS_PER_RECORD];
     int inputIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT];
     fillAllCellsIn2D(inputIn2D, UNSET);
 
@@ -445,66 +444,9 @@ int main()
             break;
 
             case 6:
-            currentNumber = 0;
-            currentIndex = 0;
-            while (keepReading)
-            {
-                currentChar = fgetc(file);
-                if (isADigit(currentChar))
-                {
-                    currentNumber *= 10;
-                    currentNumber += toInteger(currentChar);
-                }
-                else {
-                    if (currentChar == EOF || currentChar == '\n')
-                        keepReading = 0;
-                    else if (currentChar != '\t')
-                    {
-                        printf("An unexpected error occurred while reading the input file with name %s\n", fileName);
-                        return EXIT_FAILURE;
-                    }
-                    input[currentIndex] = currentNumber;
-                    currentNumber = 0;
-                    currentIndex++;
-                }
-            }
-            size = currentIndex;
-            numberOfSteps = 0;
-            printf("%04d: ", numberOfSteps);
-            for (i = 0 ; i < size ; i++)
-                printf("<%d> ", input[i]);
-            printf("\n");
-            copyFirstCells(input, records[0], size);
-            solutionIsFound = 0;
-            while (!solutionIsFound)
-            {
-                currentIndex = minIndexOfMaxValue(input, size);
-                currentNumber = input[currentIndex];
-                if (currentNumber == 0)
-                {
-                    printf("The input max value is 0 so there is nothing to distribute");
-                    return EXIT_FAILURE;
-                }
-                input[currentIndex] = 0;
-                while (currentNumber > 0)
-                {
-                    currentIndex = (currentIndex + 1) % size;
-                    input[currentIndex] += 1;
-                    currentNumber--;
-                }
-                numberOfSteps++;
-                for (i = 0 ; i < numberOfSteps && !solutionIsFound ; i++)
-                {
-                    if (!differentArrays(input, records[i], size))
-                    {
-                        number = i;
-                        solutionIsFound = 1;
-                    }
-                }
-                copyFirstCells(input, records[numberOfSteps], size);
-            }
-            printf("Part 1 - An infinite loop has been detected after the block redistribution cycle #%d with cycle #%d\n", numberOfSteps, number);
-            printf("Part 2 - the size of the loop is %d\n", numberOfSteps - number);
+            solutionIntegers = getSolutionDay06(fileName);
+            printf("Part 1 - An infinite loop has been detected after the block redistribution cycle %d\n", solutionIntegers.solutionPart1);
+            printf("Part 2 - the size of the loop is %d\n", solutionIntegers.solutionPart2);
             break;
 
             case 7:
@@ -719,21 +661,6 @@ void emptyInlineTextInput(char inlineInputAsText[MAX_ELEMENTS_PER_LINE][STRING_M
     int i;
     for (i = 0 ; i < MAX_ELEMENTS_PER_LINE ; i++)
         inlineInputAsText[i][0] = '\0';
-}
-
-int minIndexOfMaxValue(int array[], int size)
-{
-    int associatedMinIndex = size - 1;
-    int i, maxValue = array[associatedMinIndex];
-    for (i = associatedMinIndex - 1 ; i >= 0 ; i--)
-    {
-        if (array[i] >= maxValue)
-        {
-            maxValue = array[i];
-            associatedMinIndex = i;
-        }
-    }
-    return associatedMinIndex;
 }
 
 int sumOfAdjacentCells(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int x, int y)
