@@ -14,58 +14,53 @@ int main(void)
     SolutionIntegerString solutionIntegerString;
     SolutionStringInteger solutionStringInteger;
 
-    FILE* file = NULL;
     char c;
     char fileName[MAX_FILE_NAME_LENGTH];
-    int dayOfChallenge = 0, result = 0;
-    int incorrectDayOfChallenge = 1;
+    int dayOfChallenge, result;
+    int incorrectDayOfChallenge;
 
-    do
+    while (dayOfChallenge != EXIT_VALUE)
     {
-        printf("Which daily challenge do you want to access? (from 1 to %d)\nType %d to exit.\nType %d to run the test suite\nYour choice: ", LATEST_AVAILABLE_CHALLENGE, EXIT_VALUE, TEST_SUITE_VALUE);
-        scanf("%d", &dayOfChallenge);
+        incorrectDayOfChallenge = 1;
+        dayOfChallenge = 0;
+        do
+        {
+            printf("Which daily challenge do you want to access? (from 1 to %d)\nType %d to exit.\nType %d to run the test suite\nYour choice: ", MAX_CHALLENGE, EXIT_VALUE, TEST_SUITE_VALUE);
+            scanf("%d", &dayOfChallenge);
 
-        if (dayOfChallenge == EXIT_VALUE)
-        {
-            printf("Goodbye!\n");
-            return EXIT_SUCCESS;
-        }
-        else if (dayOfChallenge == TEST_SUITE_VALUE)
-        {
-            result = runTestSuite();
-            if (result == 0)
-                printf("The test suite is BROKEN. You might want to fix it before executing the code.\n\n");
+            if (dayOfChallenge == EXIT_VALUE)
+            {
+                printf("Goodbye!\n");
+                return EXIT_SUCCESS;
+            }
+            else if (dayOfChallenge == TEST_SUITE_VALUE)
+            {
+                result = runTestSuite();
+                if (result == 0)
+                    printf("The test suite is BROKEN. You might want to fix it before executing the code.\n\n");
+                else
+                    printf("The test suite is correct.\n\n");
+
+            }
+            else if (dayOfChallenge < 1 || dayOfChallenge > MAX_CHALLENGE)
+            {
+                printf("The input you typed is incorrect\n\n");
+                // We flush the buffer in case something else than two digits was typed (because of \n behaviour)
+                while ((c = getchar()) != '\n' && c != EOF) { }
+            }
             else
-                printf("The test suite is correct.\n\n");
+                incorrectDayOfChallenge = 0;
+        } while (incorrectDayOfChallenge);
 
-        }
-        else if (dayOfChallenge == 0 || dayOfChallenge > MAX_CHALLENGE)
+        printf("\nCHALLENGE OF DAY %02d\n===================\n", dayOfChallenge);
+
+        result = sprintf(fileName, "days/input/day%02d.txt", dayOfChallenge);
+        if (result < 0)
         {
-            printf("The input you typed is incorrect\n");
-            // We flush the buffer in case something else than two digits was typed (because of \n behaviour)
-            while ((c = getchar()) != '\n' && c != EOF) { }
+            printf("An unexpected error occurred before reading the input file\n");
+            return EXIT_FAILURE;
         }
-        else if (dayOfChallenge > LATEST_AVAILABLE_CHALLENGE && dayOfChallenge <= MAX_CHALLENGE)
-        {
-            printf("Challenge #%d is not accessible yet\n", dayOfChallenge);
-        }
-        else {
-            incorrectDayOfChallenge = 0;
-        }
-    } while (incorrectDayOfChallenge);
 
-    printf("\nCHALLENGE OF DAY %02d\n===================\n", dayOfChallenge);
-
-    result = sprintf(fileName, "days/input/day%02d.txt", dayOfChallenge);
-    if (result < 0)
-    {
-        printf("An unexpected error occurred before reading the input file");
-    }
-    // TBD: remove it once every day challenge has its own .c file
-    file = fopen(fileName, "r");
-
-    if (file != NULL)
-    {
         switch (dayOfChallenge)
         {
             case 1:
@@ -219,12 +214,7 @@ int main(void)
             default:
             break;
         }
-        fclose(file);
-    }
-    else
-    {
-        printf("No file found with name %s", fileName);
-        return EXIT_FAILURE;
+        printf("\n");
     }
 
     return EXIT_SUCCESS;
@@ -232,12 +222,12 @@ int main(void)
 
 int isADigit(char c)
 {
-    return (c >= ZERO_ASCII_CODE && c <= NINE_ASCII_CODE);
+    return (c >= '0' && c <= '9');
 }
 
 int toInteger(char digit)
 {
-    return digit - ZERO_ASCII_CODE;
+    return digit - '0';
 }
 
 void fillAllCellsIn2D(int arrayIn2D[ARBITRARY_2D_ARRAY_LIMIT][ARBITRARY_2D_ARRAY_LIMIT], int value)
