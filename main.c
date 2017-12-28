@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "main.h"
+#include "test/test.h"
 #include "other/header/solutionTypes.h"
 #include "other/header/stringLibrary.h"
 #include "other/header/allDays.h"
@@ -21,13 +22,22 @@ int main(void)
 
     do
     {
-        printf("Which daily challenge do you want to access? (from 1 to %d)\nType %d to exit.\nYour choice: ", LATEST_AVAILABLE_CHALLENGE, EXIT_VALUE);
+        printf("Which daily challenge do you want to access? (from 1 to %d)\nType %d to exit.\nType %d to run the test suite\nYour choice: ", LATEST_AVAILABLE_CHALLENGE, EXIT_VALUE, TEST_SUITE_VALUE);
         scanf("%d", &dayOfChallenge);
 
         if (dayOfChallenge == EXIT_VALUE)
         {
             printf("Goodbye!\n");
             return EXIT_SUCCESS;
+        }
+        else if (dayOfChallenge == TEST_SUITE_VALUE)
+        {
+            result = runTestSuite();
+            if (result == 0)
+                printf("The test suite is BROKEN. You might want to fix it before executing the code.\n\n");
+            else
+                printf("The test suite is correct.\n\n");
+
         }
         else if (dayOfChallenge == 0 || dayOfChallenge > MAX_CHALLENGE)
         {

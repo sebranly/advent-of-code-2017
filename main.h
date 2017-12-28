@@ -8,6 +8,7 @@ enum { ZERO_ASCII_CODE = 48, NINE_ASCII_CODE = 57 };
 
 #define UNSET -1
 #define EXIT_VALUE -1
+#define TEST_SUITE_VALUE -2
 #define NOT_FOUND -1
 
 #define ARBITRARY_ARRAY_LIMIT 3000

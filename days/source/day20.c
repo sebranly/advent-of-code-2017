@@ -10,7 +10,6 @@ SolutionIntegers getSolutionDay20(const char * inputFilePath)
     unsigned long long minDistanceFromOrigin = 0;
     int idParticleClosestToOrigin = 0;
     int numberOfDestroyedParticles = 0;
-    int stepsPrint = 25;
 
     Particle * particles = NULL;
     int numberOfParticles = numberOfNonEmptyLines(inputFilePath);
@@ -81,11 +80,8 @@ SolutionIntegers getSolutionDay20(const char * inputFilePath)
 
         iteration = 0;
         // TBD: think about how to determine that number in an accurate way
-        printf("Please wait... going to iterate %d times and print the progress every %d steps...\n", ARBITRARY_SUFFICIENT_ITERATION_NUMBER_BEFORE_STABLE_STATE, stepsPrint);
         while (iteration < ARBITRARY_SUFFICIENT_ITERATION_NUMBER_BEFORE_STABLE_STATE)
         {
-            if (iteration % stepsPrint == 0)
-                printf("Reached iteration #%d\n", iteration);
             for (i = 0 ; i < numberOfParticles ; i++)
                 if (!(particles[i].destroyed))
                     moveParticle(&(particles[i]));

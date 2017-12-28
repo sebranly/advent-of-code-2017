@@ -36,7 +36,6 @@ SolutionIntegers getSolutionDay13(const char * inputFilePath)
                     keepReading = 0;
             }
         }
-        printf("max is %d\n", maxNumber);
         layers = malloc((maxNumber + 1) * sizeof(SecurityLayer));
         if (layers == NULL)
         {
@@ -76,7 +75,6 @@ SolutionIntegers getSolutionDay13(const char * inputFilePath)
         }
 
         initializeSecurityScanners(layers, maxNumber + 1);
-        // displayCurrentSecurityState(layers, maxNumber + 1);
         tripSeverity = 0;
         currentPlayerLayer = 0;
         while (currentPlayerLayer < maxNumber + 1)
@@ -88,7 +86,6 @@ SolutionIntegers getSolutionDay13(const char * inputFilePath)
             }
             moveAllSecurityScanners(layers, maxNumber + 1, currentPlayerLayer);
             currentPlayerLayer++;
-            // displayCurrentSecurityState(layers, maxNumber + 1);
         }
         solution.solutionPart1 = tripSeverity;
 
@@ -101,8 +98,6 @@ SolutionIntegers getSolutionDay13(const char * inputFilePath)
             delay = 1;
             while (solution.solutionPart2 == INCORRECT_SOLUTION)
             {
-                if (delay % 1000 == 0)
-                    printf("%d\n", delay);
                 notDetected = 1;
                 currentLayer = 0;
                 while (currentLayer < maxNumber + 1 && notDetected)

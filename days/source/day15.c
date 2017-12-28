@@ -33,8 +33,6 @@ SolutionIntegers getSolutionDay15(const char * inputFilePath)
             }
         }
 
-        printf("Please wait a bit... (some seconds)\n");
-
         number1 = n1;
         number2 = n2;
         for (iteration = 0 ; iteration < NUMBER_OF_ITERATIONS_PART_1 ; iteration++)
